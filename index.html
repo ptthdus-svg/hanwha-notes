@@ -1332,6 +1332,15 @@ tr.gone td{background:#121214;color:var(--dim)}
 })();
 </script>
 
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}</script>
+<script>
+if("serviceWorker" in navigator){
+  // 새 버전이 올라오면 앱으로 돌아올 때 확인하고, 바뀌었으면 한 번 새로 열어요
+  let had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had){had=false;location.reload()}});
+  window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").then(reg=>{
+    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")reg.update().catch(()=>{})});
+  }).catch(()=>{})});
+}
+</script>
 </body>
 </html>
