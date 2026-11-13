@@ -938,7 +938,9 @@ tr.gone td{background:#121214;color:var(--dim)}
   const open=new Set();
 
   async function rpc(fn,args){
-    const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"},body:JSON.stringify(args||{})});
+    const hd={"apikey":SB_KEY,"Content-Type":"application/json"};
+    if(!SB_KEY.startsWith("sb_"))hd.Authorization="Bearer "+SB_KEY; // 예전 anon(JWT) 키일 때만
+    const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:hd,body:JSON.stringify(args||{})});
     const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch(e){}
     if(!r.ok)throw new Error((d&&d.message)||"잠시 후 다시 시도해 주세요");
     return d;
