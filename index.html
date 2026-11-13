@@ -200,54 +200,47 @@ tr.gone td{background:#121214;color:var(--dim)}
 .song{display:grid;gap:1px;min-width:0}
 .song b{font-weight:600;color:var(--ink)}
 .song small{font-size:12px;color:var(--muted)}
-#songTable{min-width:760px}
-#songTable td{vertical-align:middle}
-#songTable .c-no{width:52px;color:var(--muted);font-family:var(--f-num)}
-#songTable .c-name{width:150px;white-space:nowrap}
-.c-name-in{display:flex;align-items:center;gap:10px}
-#songTable .c-song{width:30%;white-space:normal;word-break:keep-all;overflow-wrap:break-word;line-height:1.45}
-#songTable .c-song .none{justify-self:start}
-#songTable .c-play{width:1%;white-space:nowrap}
-#songTable .c-play .play{flex-wrap:nowrap}
-@media (max-width:720px){
-  #songTable{min-width:0}
-  #songTable thead{display:none}
-  #songTable,#songTable tbody{display:block}
-  #songTable tr{display:grid;grid-template-columns:1fr;gap:6px;padding:14px 16px;border-bottom:1px solid var(--line)}
-  #songTable tr:last-child{border-bottom:0}
-  #songTable td{display:block;padding:0;border:0;width:auto!important}
-  #songTable .c-no{display:none}
-  #songTable .c-name{white-space:normal;font-size:15px}
-  #songTable .c-song{display:grid;grid-template-columns:52px 1fr;gap:8px;font-size:13.5px}
-  #songTable .c-song::before{content:attr(data-label);color:var(--muted);font-size:12px;padding-top:1px}
-  #songTable .c-song>*{justify-self:start}
-  #songTable .c-play{padding-top:4px}
-  #songTable .c-play .play{flex-wrap:wrap}
-  .table-wrap:has(#songTable){overflow-x:visible}
-}
+.table-wrap:has(#songTable){overflow:visible;border:0;background:none;border-radius:0}
+#songTable,#songTable tbody{display:block;width:100%}
+#songTable thead{display:none}
+#songTable tbody{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+#songTable tr{display:grid;grid-template-columns:1fr;gap:8px;align-content:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+#songTable td{display:block;padding:0;border:0;width:auto;min-width:0}
+#songTable .c-no{display:none}
+#songTable .c-name{white-space:normal;font-size:16px;font-weight:800;padding-bottom:4px}
+#songTable .c-name .gone-note{font-size:12px}
+#songTable .c-song{display:grid;grid-template-columns:52px 1fr;gap:8px;font-size:13.5px;word-break:keep-all;line-height:1.45}
+#songTable .c-song::before{content:attr(data-label);color:var(--muted);font-size:12px;padding-top:1px}
+#songTable .c-song>*{justify-self:start}
+#songTable .c-name+.c-song{border-top:1px solid var(--line);padding-top:10px}
+#songTable .c-play{padding-top:4px}
+#songTable .c-play .play{flex-wrap:wrap}
+#songTable tr.gone{opacity:.7}
+#songTable tr.gone td{background:none}
+#songTable .mini{width:48px;height:48px;box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px rgba(255,106,19,.45)}
+#songTable .mini img{width:48px;height:48px}
+.c-name-in{display:flex;align-items:center;gap:12px}
+.c-name-in>div{min-width:0}
+@media (max-width:400px){#songTable tbody{grid-template-columns:1fr}}
 
-/* 팀 응원가 표 */
-#teamTable{min-width:760px}
-#teamTable td{vertical-align:middle}
-#teamTable .tt-name{width:180px;white-space:normal;word-break:keep-all}
-#teamTable .tt-when{width:32%;color:var(--muted);font-size:13.5px;word-break:keep-all}
-#teamTable .tt-src{width:28%;word-break:keep-all;line-height:1.45}
-#teamTable .c-play{width:1%;white-space:nowrap}
-@media (max-width:720px){
-  #teamTable{min-width:0}
-  #teamTable thead{display:none}
-  #teamTable,#teamTable tbody{display:block}
-  #teamTable tr{display:grid;grid-template-columns:1fr;gap:6px;padding:14px 16px;border-bottom:1px solid var(--line)}
-  #teamTable tr:last-child{border-bottom:0}
-  #teamTable td{display:block;padding:0;border:0;width:auto!important}
-  #teamTable .tt-name{font-size:15px}
-  #teamTable .tt-when,#teamTable .tt-src{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:13.5px}
-  #teamTable .tt-when::before,#teamTable .tt-src::before{content:attr(data-label);color:var(--dim);font-size:12px;padding-top:1px}
-  #teamTable .tt-when{color:var(--muted)}
-  #teamTable .empty-cell{display:none}
-  #teamTable .c-play{padding-top:4px}
-  .table-wrap:has(#teamTable){overflow-x:visible}
-}
+/* 팀 응원가 카드 */
+.table-wrap:has(#teamTable){overflow:visible;border:0;background:none;border-radius:0}
+#teamTable,#teamTable tbody{display:block;width:100%}
+#teamTable thead{display:none}
+#teamTable tbody{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+#teamTable tr{display:grid;grid-template-columns:1fr;gap:10px;align-content:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+#teamTable td{display:block;padding:0;border:0;width:auto;min-width:0}
+#teamTable .tt-name{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:800;line-height:1.35;word-break:keep-all}
+.tt-ico{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;background:radial-gradient(circle at 30% 25%,#ff8a45,var(--orange) 55%,var(--orange-deep));box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px rgba(255,106,19,.45)}
+.tt-ico svg{width:20px;height:20px}
+.tt-new{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--orange-soft);color:var(--orange-ink);margin-left:6px;vertical-align:2px}
+#teamTable .tt-when{color:#d4d4d9;font-size:14px;line-height:1.6;word-break:keep-all}
+#teamTable .tt-src{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:13.5px;border-top:1px solid var(--line);padding-top:10px;word-break:keep-all}
+#teamTable .tt-src::before{content:"원곡";color:var(--muted);font-size:12px;padding-top:1px}
+#teamTable .empty-cell{display:none}
+#teamTable .c-play{white-space:normal}
+#teamTable .c-play .play{flex-wrap:wrap}
+@media (max-width:400px){#teamTable tbody{grid-template-columns:1fr}}
 .site-foot{border-top:1px solid var(--line);color:var(--dim);font-size:12px}
 .site-foot .wrap{padding-block:20px 28px}
 @media (max-width:720px){.site-foot .wrap{padding-bottom:calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0px))}}
@@ -693,6 +686,8 @@ tr.gone td{background:#121214;color:var(--dim)}
     t[0].classList.add("tt-name");t[1].classList.add("tt-when");t[1].dataset.label="언제";t[2].classList.add("tt-src");t[2].dataset.label="원곡";t[3].classList.add("c-play");
     if(!t[1].textContent.trim())t[1].classList.add("empty-cell");
     if(t[2].textContent.trim()==="—")t[2].classList.add("empty-cell");
+    const nmTx=t[0].textContent;t[0].textContent="";const ic=el("span","tt-ico");ic.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>';t[0].appendChild(ic);
+    const nmEl=el("span",null,nmTx);if(/2026년 신곡/.test(t[1].textContent)){nmEl.appendChild(el("span","tt-new","2026 신곡"));if(t[1].textContent.trim()==="2026년 신곡")t[1].classList.add("empty-cell")}t[0].appendChild(nmEl);
     if(!t[3].querySelector("a"))t[3].classList.add("empty-cell");
     const x=t[2].textContent;const i=x.indexOf(" - ");
     if(i>0&&!t[2].classList.contains("muted")){t[2].textContent="";const sw=el("div","song");sw.appendChild(el("b",null,x.slice(i+3)));sw.appendChild(el("small",null,x.slice(0,i)));t[2].appendChild(sw)}
