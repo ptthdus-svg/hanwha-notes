@@ -101,8 +101,7 @@ p{margin:0}
 .compose textarea,.compose input,.cform textarea,.cform input{font:inherit;font-size:15px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-width:0;box-sizing:border-box}
 .compose textarea{resize:vertical;min-height:96px;line-height:1.6}
 .compose textarea:focus,.compose input:focus,.cform textarea:focus,.cform input:focus{outline:none;border-color:var(--orange)}
-.compose-row,.cform-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
-@media (max-width:480px){.compose-row{grid-template-columns:1fr 1fr}.compose-row button{grid-column:1/-1;justify-content:center;padding:11px}}
+.compose-row,.cform-row{display:grid;grid-template-columns:1fr auto;gap:8px}
 .compose .chips{background:transparent;border:0;padding:0}
 .form-msg{font-size:13px;color:var(--orange-ink);min-height:0}
 .form-msg:empty{display:none}
@@ -122,7 +121,8 @@ p{margin:0}
 .cform{display:grid;gap:8px}
 .cform textarea{min-height:60px;resize:vertical;font-size:14px}
 .cform input{font-size:14px;padding:9px 10px}
-@media (max-width:480px){.cform-row{grid-template-columns:1fr 1fr}.cform-row button{grid-column:1/-1;justify-content:center}}
+.admin-bar{display:flex;justify-content:center;gap:12px;padding-top:4px}
+.post-head .del{color:#ff7b7b}
 .more{justify-self:center}
 
 /* 소식 피드 */
@@ -686,14 +686,13 @@ tr.gone td{background:#121214;color:var(--dim)}
 <section data-view="board" hidden>
   <div class="block">
     <h2>커뮤니티</h2>
-    <p class="lede">한화 이야기를 자유롭게 나누는 곳이에요. 가입 없이 닉네임과 비밀번호로 글을 쓰고, 같은 비밀번호로 지울 수 있어요.</p>
+    <p class="lede">한화 이야기를 자유롭게 나누는 곳이에요. 가입 없이 닉네임만으로 글과 댓글을 쓸 수 있어요. 올린 글은 직접 지울 수 없으니 한 번 더 읽어보고 올려 주세요.</p>
   </div>
   <form class="card compose" id="composeForm" autocomplete="off">
     <div class="chips" role="group" aria-label="글 분류" id="catPick"></div>
     <textarea id="cBody" maxlength="1000" placeholder="오늘 경기 어땠어요? 궁금한 것도 편하게 물어보세요." aria-label="내용"></textarea>
     <div class="compose-row">
       <input id="cNick" maxlength="20" placeholder="닉네임" aria-label="닉네임">
-      <input id="cPw" type="password" maxlength="50" placeholder="비밀번호(삭제용)" aria-label="비밀번호" autocomplete="new-password">
       <button class="pl main" type="submit">올리기</button>
     </div>
     <p class="small muted">누구나 볼 수 있는 공개 게시판이에요. 욕설·비방·개인정보·광고 글은 관리자가 지울 수 있어요.</p>
@@ -703,6 +702,7 @@ tr.gone td{background:#121214;color:var(--dim)}
   <div id="boardStatus" class="status" aria-live="polite"></div>
   <div class="posts" id="posts"></div>
   <button class="pl more" id="boardMore" type="button" hidden>이전 글 더 보기</button>
+  <div class="admin-bar"><button class="linkbtn" id="adminBtn" type="button">관리자</button></div>
 </section>
 
 </div>
@@ -958,17 +958,25 @@ tr.gone td{background:#121214;color:var(--dim)}
   function pickCat(v){cat=v;chips($("catPick"),CATS,cat,pickCat)}
   function pickFilter(v){filter=v;chips($("boardFilters"),["전체"].concat(CATS),filter,pickFilter);render()}
 
-  async function del(id){
-    const pw=prompt("글을 쓸 때 정한 비밀번호를 입력하세요");
-    if(!pw)return;
-    try{await rpc("board_delete",{p_id:id,p_pw:pw});await load(true)}catch(e){alert(e.message)}
+  let admin=store.get("board-admin");
+  function adminUI(){$("adminBtn").textContent=admin?"관리자 모드 끄기":"관리자"}
+  $("adminBtn").onclick=async()=>{
+    if(admin){admin="";store.set("board-admin","");adminUI();render();return}
+    const pw=prompt("관리자 비밀번호를 입력하세요");if(!pw)return;
+    try{if(await rpc("board_is_admin",{p_pw:pw})){admin=pw;store.set("board-admin",pw);adminUI();render()}else alert("관리자 비밀번호가 맞지 않아요")}
+    catch(e){alert(e.message)}
+  };
+  async function del(id,isPost){
+    if(!confirm(isPost?"이 글을 지울까요? 달린 댓글도 같이 지워져요.":"이 댓글을 지울까요?"))return;
+    try{await rpc("board_delete",{p_id:id,p_pw:admin});await load(true)}
+    catch(e){alert(e.message);if(/관리자 비밀번호/.test(e.message)){admin="";store.set("board-admin","");adminUI();render()}}
   }
   function head(p){
     const h=el("div","post-head");
     if(!p.parent_id)h.appendChild(el("span","tag",p.category));
     h.appendChild(el("span","nick",p.nickname));
     const w=el("span","when",ago(p.created_at));w.title=new Date(p.created_at).toLocaleString("ko-KR");h.appendChild(w);
-    const d=el("button","linkbtn del","삭제");d.type="button";d.onclick=()=>del(p.id);h.appendChild(d);
+    if(admin){const d=el("button","linkbtn del","삭제");d.type="button";d.onclick=()=>del(p.id,!p.parent_id);h.appendChild(d)}
     return h;
   }
   function cform(pid){
@@ -976,14 +984,13 @@ tr.gone td{background:#121214;color:var(--dim)}
     const ta=el("textarea");ta.maxLength=1000;ta.placeholder="댓글 쓰기";ta.setAttribute("aria-label","댓글 내용");
     const row=el("div","cform-row");
     const nk=el("input");nk.maxLength=20;nk.placeholder="닉네임";nk.value=store.get("board-nick");nk.setAttribute("aria-label","닉네임");
-    const pw=el("input");pw.type="password";pw.maxLength=50;pw.placeholder="비밀번호";pw.autocomplete="new-password";pw.setAttribute("aria-label","비밀번호");
     const b=el("button","pl main","댓글 달기");b.type="submit";
-    row.append(nk,pw,b);const m=el("p","form-msg");m.setAttribute("aria-live","polite");
+    row.append(nk,b);const m=el("p","form-msg");m.setAttribute("aria-live","polite");
     f.append(ta,row,m);
     f.onsubmit=async e=>{e.preventDefault();if(busy)return;
-      const err=check(nk.value,ta.value,pw.value);if(err){m.textContent=err;return}
+      const err=check(nk.value,ta.value);if(err){m.textContent=err;return}
       busy=true;b.disabled=true;m.textContent="";
-      try{await rpc("board_create",{p_parent:pid,p_category:null,p_nickname:nk.value.trim(),p_body:ta.value.trim(),p_pw:pw.value});store.set("board-nick",nk.value.trim());open.add(pid);await load(true)}
+      try{await rpc("board_create",{p_parent:pid,p_category:null,p_nickname:nk.value.trim(),p_body:ta.value.trim()});store.set("board-nick",nk.value.trim());open.add(pid);await load(true)}
       catch(x){m.textContent=x.message}finally{busy=false;b.disabled=false}};
     return f;
   }
@@ -1031,29 +1038,28 @@ tr.gone td{background:#121214;color:var(--dim)}
       ingest(rows,reset);hasMore=tops>=n;loaded=true;status.textContent="";render();
     }catch(e){status.textContent="글을 불러오지 못했어요. 잠시 후 새로고침해 보세요."}
   }
-  function check(nick,body,pw){
+  function check(nick,body){
     if(!nick.trim())return "닉네임을 써주세요";
     if(!body.trim())return "내용을 써주세요";
-    if(pw.length<4)return "비밀번호는 4자 이상으로 정해주세요(삭제할 때 필요해요)";
     return "";
   }
   form.onsubmit=async e=>{
     e.preventDefault();if(busy)return;
-    const nick=$("cNick").value,body=$("cBody").value,pw=$("cPw").value;
-    const err=check(nick,body,pw);if(err){msg.textContent=err;return}
+    const nick=$("cNick").value,body=$("cBody").value;
+    const err=check(nick,body);if(err){msg.textContent=err;return}
     busy=true;msg.textContent="";const b=form.querySelector("button[type=submit]");b.disabled=true;
     try{
-      await rpc("board_create",{p_parent:null,p_category:cat,p_nickname:nick.trim(),p_body:body.trim(),p_pw:pw});
-      store.set("board-nick",nick.trim());$("cBody").value="";$("cPw").value="";
+      await rpc("board_create",{p_parent:null,p_category:cat,p_nickname:nick.trim(),p_body:body.trim()});
+      store.set("board-nick",nick.trim());$("cBody").value="";
       if(filter!=="전체"&&filter!==cat)pickFilter("전체");
       await load(true);
     }catch(x){msg.textContent=x.message}finally{busy=false;b.disabled=false}
   };
   more.onclick=()=>load(false);
   $("cNick").value=store.get("board-nick");
-  pickCat(cat);pickFilter(filter);
+  adminUI();pickCat(cat);pickFilter(filter);
 
-  if(!SB_URL||!SB_KEY){form.hidden=true;status.textContent="커뮤니티는 준비 중이에요.";return}
+  if(!SB_URL||!SB_KEY){form.hidden=true;$("adminBtn").hidden=true;status.textContent="커뮤니티는 준비 중이에요.";return}
   function maybeLoad(){if(location.hash==="#board"&&!loaded)load(true)}
   window.addEventListener("hashchange",maybeLoad);maybeLoad();
 })();
