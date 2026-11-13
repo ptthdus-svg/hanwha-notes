@@ -46,7 +46,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .brand-mark{width:34px;height:34px;border-radius:10px;background:var(--orange);display:grid;place-items:center}
 .brand-name{font-weight:800;font-size:17px;letter-spacing:-.01em}
 nav.tabs{margin-left:auto;display:flex;gap:4px}
-nav.tabs a{display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-weight:700;font-size:14px;padding:8px 12px;border-radius:999px}
+nav.tabs a{display:flex;align-items:center;gap:5px;text-decoration:none;color:var(--muted);font-weight:700;font-size:14px;padding:8px 9px;border-radius:999px;white-space:nowrap}
 nav.tabs a svg{width:18px;height:18px;flex:none}
 nav.tabs a:hover{color:var(--ink)}
 nav.tabs a[aria-current="page"]{color:var(--ink);background:var(--surface-2)}
@@ -56,6 +56,8 @@ nav.tabs a[aria-current="page"] svg{color:var(--orange)}
   .topbar .wrap{height:56px}
   nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;margin:0;justify-content:space-around;gap:0;background:rgba(14,14,16,.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
   nav.tabs a{flex-direction:column;gap:3px;font-size:11px;padding:6px 4px;border-radius:10px;flex:1;min-width:0;position:relative}
+  nav.tabs a span{white-space:nowrap;letter-spacing:-.02em}
+  @media (max-width:400px){nav.tabs a{font-size:10.5px;padding:6px 1px}}
   nav.tabs a[aria-current="page"]{background:none;color:var(--orange)}
   nav.tabs a[aria-current="page"]::before{content:"";position:absolute;top:-6px;left:28%;right:28%;height:2px;border-radius:2px;background:var(--orange)}
   main .wrap{padding-bottom:40px!important}
@@ -95,6 +97,34 @@ p{margin:0}
 .chip{font:inherit;font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;flex:1 0 auto}
 .chip:hover{color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--orange);color:#fff}
+
+/* 경기 */
+.games{display:grid;gap:8px}
+.game{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:12px 14px}
+.game .gd{font-family:var(--f-num);font-weight:700;font-size:15px;line-height:1.2}
+.game .gd small{display:block;font-family:inherit;font-weight:500;font-size:11.5px;color:var(--dim);margin-top:2px}
+.game .gm{min-width:0}
+.game .gm b{font-size:15px}
+.game .gm small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.game .gr{display:flex;align-items:center;gap:8px;font-family:var(--f-num);font-weight:700;font-size:16px;white-space:nowrap}
+.res{font-family:inherit;font-size:12px;font-weight:800;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none}
+.res.W{background:var(--orange);color:#fff}
+.res.L{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.res.D{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.game.off{opacity:.55}
+.game.next{border-color:var(--orange)}
+.gnext{display:grid;gap:10px}
+.gnext .big{font-size:20px;font-weight:800;line-height:1.35}
+.form10{display:flex;gap:4px;flex-wrap:wrap}
+.form10 .res{width:22px;height:22px;font-size:11px}
+table.st th,table.st td{padding:10px 8px;text-align:center;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+table.st td:nth-child(2),table.st th:nth-child(2){text-align:left;font-family:inherit;font-weight:700;white-space:nowrap}
+table.st tr.me td{background:var(--orange-soft);color:var(--orange-ink)}
+table.st td:first-child{color:var(--muted)}
+table.st tr.me td:first-child{color:var(--orange-ink)}
+@media (max-width:600px){table.st .wide{display:none}table.st th,table.st td{padding:10px 5px;font-size:13px}}
+.champ{display:flex;gap:12px;align-items:center}
+.champ .cup{font-size:26px}
 
 /* 커뮤니티 */
 .compose{display:grid;gap:10px}
@@ -309,6 +339,7 @@ tr.gone td{background:#121214;color:var(--dim)}
     <a class="brand" href="#news"><span class="brand-mark"><img src="eagles-emblem.png" alt="" width="40" height="33"></span><span class="brand-name">한화 야구 노트</span></a>
     <nav class="tabs" aria-label="페이지 구역">
     <a href="#news" data-tab="news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2"/><path d="M8 9h4M8 13h4"/></svg><span>소식</span></a>
+    <a href="#games" data-tab="games"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3M8 17h6"/></svg><span>경기</span></a>
     <a href="#basics" data-tab="basics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 4.5c2 4 2 11 0 15M16.5 4.5c-2 4-2 11 0 15"/></svg><span>야구 입문</span></a>
     <a href="#eagles" data-tab="eagles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span>한화 이글스</span></a>
     <a href="#players" data-tab="players"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg><span>선수·응원가</span></a>
@@ -358,6 +389,28 @@ tr.gone td{background:#121214;color:var(--dim)}
 </section>
 
 <!-- ============ 야구 입문 ============ -->
+<section data-view="games" hidden>
+  <div class="block">
+    <h2>경기</h2>
+    <nav class="subtabs" aria-label="경기 구분">
+      <a href="#schedule" data-sub="schedule">한화 일정</a>
+      <a href="#standings" data-sub="standings">KBO 순위</a>
+    </nav>
+  </div>
+  <div class="subpane block" data-pane="schedule">
+    <div id="gNext"></div>
+    <div class="chips" role="group" aria-label="월 선택" id="gMonths"></div>
+    <div class="games" id="gList"><div class="status">경기 일정을 불러오는 중…</div></div>
+    <p class="src" id="gSrc"></p>
+  </div>
+  <div class="subpane block" data-pane="standings" hidden>
+    <div id="sChamp"></div>
+    <div class="table-wrap"><table class="t st" id="sTable"></table></div>
+    <p class="small muted">승률 = 승 ÷ (승 + 패), 무승부는 빼요. 게임차는 1위 팀과의 거리예요. 자세한 읽는 법은 <a href="#basics" style="color:var(--orange-ink)">야구 입문</a>에 있어요.</p>
+    <p class="src" id="sSrc"></p>
+  </div>
+</section>
+
 <section data-view="basics" hidden>
   <div class="block">
     <h2>처음 보는 사람을 위한 야구</h2>
@@ -711,13 +764,14 @@ tr.gone td{background:#121214;color:var(--dim)}
 
 <script>
 (function(){
-  const VIEWS=["news","basics","eagles","players","board"];
-  const SUBS={players:"players",cheer:"players",teamsongs:"players"};
+  const VIEWS=["news","games","basics","eagles","players","board"];
+  const SUBS={players:"players",cheer:"players",teamsongs:"players",schedule:"games",standings:"games"};
+  const DEF={players:"players",games:"schedule"};
   function show(){
     const h=(location.hash||"").replace("#","");
     const sub=SUBS[h]?h:null;
     const v=sub?SUBS[h]:(VIEWS.includes(h)?h:"news");
-    const cur=sub||"players";
+    const cur=sub||DEF[v]||"";
     document.querySelectorAll(".subpane").forEach(p=>{p.hidden=p.dataset.pane!==cur});
     document.querySelectorAll(".subtabs a").forEach(a=>{if(a.dataset.sub===cur)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
     document.querySelectorAll("section[data-view]").forEach(s=>{s.hidden=s.dataset.view!==v});
@@ -1062,6 +1116,117 @@ tr.gone td{background:#121214;color:var(--dim)}
   if(!SB_URL||!SB_KEY){form.hidden=true;$("adminBtn").hidden=true;status.textContent="커뮤니티는 준비 중이에요.";return}
   function maybeLoad(){if(location.hash==="#board"&&!loaded)load(true)}
   window.addEventListener("hashchange",maybeLoad);maybeLoad();
+})();
+</script>
+
+<script>
+/* 경기 일정·순위: kbo.json 은 GitHub Actions 가 KBO 공식 홈페이지에서 매일 받아와요 */
+(function(){
+  const $=id=>document.getElementById(id);
+  const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+  const DOW="일월화수목금토";
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  let D=null,month=null;
+  function md(d){const x=new Date(d+"T00:00:00");return {t:(x.getMonth()+1)+"."+String(x.getDate()).padStart(2,"0"),w:DOW[x.getDay()]}}
+  function res(g){
+    if(g.homeScore==null)return null;
+    const me=g.away==="한화"?g.awayScore:g.homeScore,op=g.away==="한화"?g.homeScore:g.awayScore;
+    return {me,op,r:me>op?"W":me<op?"L":"D"};
+  }
+  const RL={W:"승",L:"패",D:"무"};
+  function hhRow(g,next){
+    const c=el("div","card game"+(g.note?" off":"")+(next?" next":""));
+    const d=md(g.date),dd=el("div","gd",d.t);dd.appendChild(el("small",null,"("+d.w+") "+(g.time||"")));c.appendChild(dd);
+    const home=g.home==="한화",op=home?g.away:g.home;
+    const m=el("div","gm");m.appendChild(el("b",null,(home?"vs ":"@ ")+op));m.appendChild(el("small",null,(home?"홈":"원정")+" · "+g.stadium));c.appendChild(m);
+    const r=el("div","gr"),x=res(g);
+    if(x){r.appendChild(el("span",null,x.me+" : "+x.op));r.appendChild(el("span","res "+x.r,RL[x.r]))}
+    else if(g.note)r.appendChild(el("span","small muted",g.note));
+    else r.appendChild(el("span","small",next?"다음 경기":"예정"));
+    c.appendChild(r);return c;
+  }
+  function psRow(g){
+    const c=el("div","card game");
+    const d=md(g.date),dd=el("div","gd",d.t);dd.appendChild(el("small",null,"("+d.w+")"));c.appendChild(dd);
+    const m=el("div","gm");
+    m.appendChild(el("b",null,g.homeScore!=null?(g.away+" "+g.awayScore+" : "+g.homeScore+" "+g.home):(g.away+" vs "+g.home)));
+    m.appendChild(el("small",null,(g.note||"")+" · "+g.stadium));c.appendChild(m);c.appendChild(el("div"));
+    return c;
+  }
+  function chips(){
+    const box=$("gMonths");box.textContent="";
+    const ms=[...new Set(D.games.map(g=>g.date.slice(0,7)))].sort();
+    const items=ms.map(k=>({k,l:(ms.some(x=>x.slice(0,4)!==ms[0].slice(0,4))?k.slice(2,4)+"년 ":"")+parseInt(k.slice(5))+"월"}));
+    if(D.postseason&&D.postseason.length)items.push({k:"ps",l:"가을야구"});
+    items.forEach(it=>{const b=el("button","chip",it.l);b.type="button";b.setAttribute("aria-pressed",String(it.k===month));b.onclick=()=>{month=it.k;chips();list()};box.appendChild(b)});
+    const on=box.querySelector('[aria-pressed="true"]');if(on)box.scrollLeft=Math.max(0,on.offsetLeft-box.clientWidth/2+on.offsetWidth/2);
+  }
+  function list(){
+    const box=$("gList");box.textContent="";
+    if(month==="ps"){
+      box.appendChild(el("p","small muted","한화가 나가지 않은 경기도 포함한 "+D.season+" 포스트시즌 전체 결과예요."));
+      D.postseason.forEach(g=>box.appendChild(psRow(g)));return;
+    }
+    const nx=nextGame();
+    D.games.filter(g=>g.date.startsWith(month)).forEach(g=>box.appendChild(hhRow(g,g===nx)));
+  }
+  function nextGame(){return D.games.find(g=>g.date>=today&&g.homeScore==null&&!g.note)||null}
+  function top(){
+    const box=$("gNext");box.textContent="";
+    const c=el("div","card gnext"),nx=nextGame();
+    if(nx){
+      const d=md(nx.date),home=nx.home==="한화";
+      c.appendChild(el("span","tag","다음 경기"));
+      c.appendChild(el("div","big",d.t+" ("+d.w+") "+(nx.time||"")+" · "+(home?"vs ":"@ ")+(home?nx.away:nx.home)));
+      c.appendChild(el("span","small muted",(home?"홈":"원정")+" · "+nx.stadium));
+    }else{
+      const me=(D.standings||[]).find(r=>r.team==="한화");
+      c.appendChild(el("span","tag",D.season+" 시즌 종료"));
+      if(me)c.appendChild(el("div","big",me.w+"승 "+me.d+"무 "+me.l+"패 · 정규시즌 "+regRank(me)+"위"));
+      c.appendChild(el("span","small muted",(D.season+1)+" 일정은 KBO가 발표하면 여기에 자동으로 올라와요."));
+    }
+    const played=D.games.filter(g=>g.homeScore!=null).slice(-10);
+    if(played.length){
+      const f=el("div","form10");played.forEach(g=>{const x=res(g);const s=el("span","res "+x.r,RL[x.r]);s.title=g.date+" "+x.me+":"+x.op;f.appendChild(s)});
+      const w=el("div");w.style.cssText="display:grid;gap:6px";w.appendChild(el("span","small muted","최근 "+played.length+"경기 (왼쪽이 오래된 경기)"));w.appendChild(f);c.appendChild(w);
+    }
+    box.appendChild(c);
+  }
+  function sorted(){return (D.standings||[]).slice().sort((a,b)=>parseFloat(b.pct)-parseFloat(a.pct))}
+  function regRank(t){const s=sorted();return 1+s.filter(x=>parseFloat(x.pct)>parseFloat(t.pct)).length}
+  function standings(){
+    const t=$("sTable");t.textContent="";
+    const th=el("thead"),hr=el("tr");
+    [["순위"],["팀"],["경기","wide"],["승"],["무"],["패"],["승률"],["게임차"],["최근 10","wide"],["연속","wide"]].forEach(([h,c])=>hr.appendChild(el("th",c||null,h)));
+    th.appendChild(hr);t.appendChild(th);
+    const tb=el("tbody");
+    sorted().forEach(r=>{
+      const tr=el("tr",r.team==="한화"?"me":null);
+      const l10=r.last10.replace(/(\d+)승(\d+)무(\d+)패/,(m,a,b,c)=>a+"-"+b+"-"+c);
+      [[regRank(r)],[r.team],[r.g,"wide"],[r.w],[r.d],[r.l],[r.pct.replace(/^0/,"")],[r.gb==="0"?"-":r.gb],[l10,"wide"],[r.streak,"wide"]].forEach(([v,c])=>tr.appendChild(el("td",c||null,String(v))));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    const ks=(D.postseason||[]).filter(g=>/^KS/.test(g.note||"")&&g.homeScore!=null);
+    const box=$("sChamp");box.textContent="";
+    if(ks.length){
+      const w={};ks.forEach(g=>{const win=g.awayScore>g.homeScore?g.away:g.homeScore>g.awayScore?g.home:null;if(win)w[win]=(w[win]||0)+1});
+      const teams=[...new Set(ks.flatMap(g=>[g.away,g.home]))];
+      const champ=teams.find(x=>(w[x]||0)>=4);
+      if(champ){const op=teams.find(x=>x!==champ);
+        const c=el("div","card champ");c.appendChild(el("span","cup","🏆"));
+        const tx=el("div");tx.appendChild(el("b",null,D.season+" 한국시리즈 우승: "+champ));tx.appendChild(el("div","small muted",op+"에 "+(w[champ]||0)+"승 "+(w[op]||0)+"패"));
+        c.appendChild(tx);box.appendChild(c);}
+    }
+    $("sSrc").textContent="정규시즌 승률 순서예요. "+(D.standingsDate?D.standingsDate+" 기준, ":"")+"KBO 공식 홈페이지에서 매일 자동으로 받아와요.";
+  }
+  fetch("kbo.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{
+    D=d;const nx=nextGame();
+    const ms=[...new Set(D.games.map(g=>g.date.slice(0,7)))].sort();
+    month=nx?nx.date.slice(0,7):(ms.filter(m=>D.games.some(g=>g.date.startsWith(m)&&g.homeScore!=null)).pop()||ms[ms.length-1]);
+    top();chips();list();standings();
+    $("gSrc").textContent="출처: KBO 공식 홈페이지 · 매일 자동 갱신 (마지막 확인 "+String(D.updatedAt||"").slice(0,16).replace("T"," ")+")";
+  }).catch(()=>{$("gList").textContent="";$("gList").appendChild(el("div","status","경기 정보를 불러오지 못했어요. 잠시 후 새로고침해 보세요."))});
 })();
 </script>
 

@@ -1,0 +1,35 @@
+name: KBO 일정·순위 갱신
+
+on:
+  schedule:
+    # 경기 끝난 뒤(22:40 KST)와 아침(07:40 KST). cron 은 UTC 기준이에요.
+    - cron: "40 13 * * *"
+    - cron: "40 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kbo-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: KBO 데이터 받기
+        run: python scripts/update_kbo.py
+      - name: 바뀐 게 있으면 커밋
+        run: |
+          if git diff --quiet -- kbo.json; then echo "변경 없음"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kbo.json
+          git commit -m "KBO 일정·순위 갱신 $(TZ=Asia/Seoul date +%Y-%m-%d)"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
+          exit 1
