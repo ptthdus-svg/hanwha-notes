@@ -225,6 +225,29 @@ tr.gone td{background:#121214;color:var(--dim)}
   #songTable .c-play .play{flex-wrap:wrap}
   .table-wrap:has(#songTable){overflow-x:visible}
 }
+
+/* 팀 응원가 표 */
+#teamTable{min-width:760px}
+#teamTable td{vertical-align:middle}
+#teamTable .tt-name{width:180px;white-space:normal;word-break:keep-all}
+#teamTable .tt-when{width:32%;color:var(--muted);font-size:13.5px;word-break:keep-all}
+#teamTable .tt-src{width:28%;word-break:keep-all;line-height:1.45}
+#teamTable .c-play{width:1%;white-space:nowrap}
+@media (max-width:720px){
+  #teamTable{min-width:0}
+  #teamTable thead{display:none}
+  #teamTable,#teamTable tbody{display:block}
+  #teamTable tr{display:grid;grid-template-columns:1fr;gap:6px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  #teamTable tr:last-child{border-bottom:0}
+  #teamTable td{display:block;padding:0;border:0;width:auto!important}
+  #teamTable .tt-name{font-size:15px}
+  #teamTable .tt-when,#teamTable .tt-src{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:13.5px}
+  #teamTable .tt-when::before,#teamTable .tt-src::before{content:attr(data-label);color:var(--dim);font-size:12px;padding-top:1px}
+  #teamTable .tt-when{color:var(--muted)}
+  #teamTable .empty-cell{display:none}
+  #teamTable .c-play{padding-top:4px}
+  .table-wrap:has(#teamTable){overflow-x:visible}
+}
 .site-foot{border-top:1px solid var(--line);color:var(--dim);font-size:12px}
 .site-foot .wrap{padding-block:20px 28px}
 @media (max-width:720px){.site-foot .wrap{padding-bottom:calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0px))}}
@@ -513,7 +536,7 @@ tr.gone td{background:#121214;color:var(--dim)}
     <h3>팀 응원가</h3>
     <p class="small muted">특정 선수가 아니라 상황마다 다 같이 부르는 노래예요.</p>
     <div class="table-wrap">
-      <table class="t">
+      <table class="t" id="teamTable">
         <thead><tr><th>이름</th><th>언제 / 특징</th><th>원곡</th><th>듣기</th></tr></thead>
         <tbody>
           <tr><td>영원히 최강한화</td><td>2026년 신곡</td><td class="muted">새로 만든 곡</td><td><div class="play"><a class="pl main" data-off="22:01">▶ 공식 영상</a></div></td></tr>
@@ -666,6 +689,14 @@ tr.gone td{background:#121214;color:var(--dim)}
     [t[2],t[3]].forEach(td=>{if(td.children.length)return;const x=td.textContent;const i=x.indexOf(" - ");if(i>0){td.textContent="";const sw=el("div","song");sw.appendChild(el("b",null,x.slice(i+3)));sw.appendChild(el("small",null,x.slice(0,i)));td.appendChild(sw)}});
     const nm=t[1].firstChild&&t[1].firstChild.nodeType===3?t[1].firstChild.textContent:"";const no=t[0].textContent;
     const wrap=el("div","c-name-in");wrap.appendChild(avatar(nm,no==="—"?null:no,"mini"));const tx=el("div");while(t[1].firstChild)tx.appendChild(t[1].firstChild);wrap.appendChild(tx);t[1].appendChild(wrap)});
+  document.querySelectorAll("#teamTable tbody tr").forEach(tr=>{const t=tr.children;
+    t[0].classList.add("tt-name");t[1].classList.add("tt-when");t[1].dataset.label="언제";t[2].classList.add("tt-src");t[2].dataset.label="원곡";t[3].classList.add("c-play");
+    if(!t[1].textContent.trim())t[1].classList.add("empty-cell");
+    if(t[2].textContent.trim()==="—")t[2].classList.add("empty-cell");
+    if(!t[3].querySelector("a"))t[3].classList.add("empty-cell");
+    const x=t[2].textContent;const i=x.indexOf(" - ");
+    if(i>0&&!t[2].classList.contains("muted")){t[2].textContent="";const sw=el("div","song");sw.appendChild(el("b",null,x.slice(i+3)));sw.appendChild(el("small",null,x.slice(0,i)));t[2].appendChild(sw)}
+  });
   document.querySelectorAll("a[data-off],a[data-tjb]").forEach(a=>{a.href=a.dataset.off?yt(OFF,a.dataset.off):yt(TJB,a.dataset.tjb);a.target="_blank";a.rel="noopener"});
   document.querySelectorAll("a[data-q]").forEach(a=>{a.href=ys(a.dataset.q);a.target="_blank";a.rel="noopener"});
 
