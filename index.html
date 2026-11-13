@@ -134,6 +134,17 @@ table.t td:first-child{font-weight:700;white-space:nowrap}
 .count span{display:flex;align-items:center;gap:6px}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .ps{display:grid;gap:8px}
+.sl{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 8px}
+.sl span{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--muted)}
+.lad{display:grid;gap:12px}
+.lad-row{display:grid;gap:6px}
+.lad-row>b{font-size:14px}
+.lad-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.lad-steps span{background:var(--surface-2);border-radius:8px;padding:7px 2px;text-align:center;font-family:var(--f-num);font-weight:600;font-size:14px;color:var(--ink);white-space:nowrap}
+.lad-steps span:nth-child(3){background:var(--orange-soft);color:var(--orange-ink)}
+.lad-steps span:nth-child(4){background:var(--orange);color:#fff}
+.lad-steps i{display:block;font-style:normal;font-family:inherit;font-weight:400;font-size:10.5px;opacity:.75;margin-top:1px}
+.sl span b{font-family:var(--f-num);font-size:15px;color:var(--orange-ink);margin-left:5px}
 .ps .row{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:baseline}
 .ps .row b{font-size:14px}
 @media (max-width:480px){.ps .row{grid-template-columns:1fr;gap:0}}
@@ -417,7 +428,61 @@ tr.gone td{background:#121214;color:var(--dim)}
   </div>
 
   <div class="block">
-    <h3>6. KBO 리그 한 해의 흐름</h3>
+    <h3>6. 성적 읽는 법</h3>
+    <p class="small muted">선수 카드에 나오는 영어 약자와 숫자를 실제 예시로 읽어볼게요.</p>
+    <div class="grid2">
+      <div class="card"><b>타자 카드 읽기</b>
+        <div class="sl"><span>AVG<b>.285</b></span><span>HR<b>34</b></span><span>RBI<b>118</b></span><span>OPS<b>.883</b></span></div>
+        <p class="small muted" style="margin-bottom:10px">강백호 선수 카드예요.</p>
+        <div class="ps">
+          <div class="row"><b>AVG .285</b><span class="small muted">타율이에요. "2할 8푼 5리"라고 읽어요. 10번 치면 3번 가까이 안타를 쳤다는 뜻이에요.</span></div>
+          <div class="row"><b>HR 34</b><span class="small muted">홈런 34개. 30개를 넘기면 홈런왕 경쟁에 들어가요.</span></div>
+          <div class="row"><b>RBI 118</b><span class="small muted">타점 118. 내 타격으로 들어온 점수예요. 100을 넘기면 정상급이에요.</span></div>
+          <div class="row"><b>OPS .883</b><span class="small muted">출루율 + 장타율. 볼넷과 장타까지 반영한 종합 공격력이에요.</span></div>
+        </div>
+      </div>
+      <div class="card"><b>투수 카드 읽기</b>
+        <div class="sl"><span>W-L<b>9-6</b></span><span>ERA<b>3.88</b></span><span>IP<b>134⅔</b></span></div>
+        <p class="small muted" style="margin-bottom:10px">류현진 선수 카드예요.</p>
+        <div class="ps">
+          <div class="row"><b>W-L 9-6</b><span class="small muted">9승 6패. 승패는 우리 팀 타선이 점수를 내줬는지에 따라서도 달라져서, 투수 실력을 다 보여주지는 않아요.</span></div>
+          <div class="row"><b>ERA 3.88</b><span class="small muted">평균자책점. 9이닝을 던지면 3.88점을 내준다는 뜻이에요. <b>낮을수록 좋아요.</b></span></div>
+          <div class="row"><b>IP 134⅔</b><span class="small muted">134이닝 + 아웃 2개를 던졌어요. ⅓이 아웃 1개예요.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card"><b>숫자 하나로 감 잡기</b>
+      <p class="small muted" style="margin:4px 0 10px">대략적인 기준이에요. 해마다 리그 분위기(타고투저·투고타저)에 따라 조금씩 달라져요.</p>
+      <div class="lad">
+        <div class="lad-row"><b>타율</b><div class="lad-steps"><span>.250↓<i>아쉬움</i></span><span>.270<i>보통</i></span><span>.290<i>좋음</i></span><span>.320+<i>최상위</i></span></div></div>
+        <div class="lad-row"><b>OPS</b><div class="lad-steps"><span>.700↓<i>아쉬움</i></span><span>.750<i>보통</i></span><span>.850<i>좋음</i></span><span>.950+<i>최상위</i></span></div></div>
+        <div class="lad-row"><b>ERA <small class="muted">낮을수록 좋음</small></b><div class="lad-steps"><span>5점대<i>아쉬움</i></span><span>4점대<i>보통</i></span><span>3점대<i>좋음</i></span><span>2점대<i>최상위</i></span></div></div>
+      </div>
+      <p class="small muted" style="margin-top:10px">💡 타자는 타율보다 <b>OPS</b>를 먼저 보세요. 볼넷을 골라 나가는 능력과 장타력이 함께 들어 있어서 실제 공격 기여에 더 가까워요.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><b>팀 순위표 읽기</b>
+        <div class="sl"><span>승<b>57</b></span><span>무<b>4</b></span><span>패<b>83</b></span><span>승률<b>.407</b></span></div>
+        <div class="ps">
+          <div class="row"><b>승률</b><span class="small muted">승 ÷ (승 + 패). 무승부는 빼고 계산해요. 57 ÷ 140 = .407 (한화 2026).</span></div>
+          <div class="row"><b>게임차</b><span class="small muted">앞 팀과의 거리예요. "3게임 차"면 우리가 3번 이기고 그동안 상대가 3번 지면 같아져요.</span></div>
+        </div>
+      </div>
+      <div class="card"><b>중계 전광판 읽기</b>
+        <div class="sl"><span>R<b>5</b></span><span>H<b>9</b></span><span>E<b>1</b></span><span>B<b>4</b></span></div>
+        <div class="ps">
+          <div class="row"><b>R</b><span class="small muted">득점(Run). 이게 최종 점수예요.</span></div>
+          <div class="row"><b>H</b><span class="small muted">안타(Hit) 개수.</span></div>
+          <div class="row"><b>E</b><span class="small muted">실책(Error). 수비 실수 횟수예요.</span></div>
+          <div class="row"><b>B</b><span class="small muted">볼넷(Base on balls) 개수.</span></div>
+        </div>
+        <p class="small muted" style="margin-top:8px">안타는 많은데 점수가 적으면 "찬스에서 못 쳤다", 실책이 많으면 "수비가 흔들렸다"로 읽으면 돼요.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>7. KBO 리그 한 해의 흐름</h3>
     <div class="card" style="display:grid;gap:14px">
       <p>10개 구단이 팀당 <b class="mono">144</b>경기를 치러요. 3월 말 개막, 9월 말~10월 초에 정규시즌이 끝나요.</p>
       <div class="ps">
@@ -431,7 +496,7 @@ tr.gone td{background:#121214;color:var(--dim)}
   </div>
 
   <div class="block">
-    <h3>7. 직관 갈 때</h3>
+    <h3>8. 직관 갈 때</h3>
     <div class="grid2">
       <div class="card"><b>예매</b><p class="small muted">구단 공식 예매처에서 보통 1주 전쯤 열려요. 주말·인기 경기는 금방 매진되니 오픈 시간을 미리 확인하세요.</p></div>
       <div class="card"><b>자리</b><p class="small muted">응원석(응원단 앞)은 서서 응원가를 함께 불러요. 처음이면 내야 지정석에서 경기 보는 재미부터 느껴보는 것도 좋아요.</p></div>
