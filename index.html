@@ -154,6 +154,10 @@ table.st tr.me td:first-child{color:var(--orange-ink)}
 .form-msg{font-size:13px;color:var(--orange-ink);min-height:0}
 .form-msg:empty{display:none}
 .posts{display:grid;gap:12px}
+.notify{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:14px 16px}
+.notify-tx{display:grid;gap:2px;min-width:0}
+.notify .pl{flex:none}
+.notify .pl.off{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
 .post{display:grid;gap:10px}
 .post-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
 .post-head .nick{font-weight:800;color:var(--ink)}
@@ -773,6 +777,10 @@ tr.gone td{background:#121214;color:var(--dim)}
     <h2>커뮤니티</h2>
     <p class="lede">한화 이야기를 자유롭게 나누는 곳이에요. 가입 없이 닉네임만으로 글과 댓글을 쓸 수 있어요. 올린 글은 직접 지울 수 없으니 한 번 더 읽어보고 올려 주세요.</p>
   </div>
+  <div class="card notify" id="pushBox" hidden>
+    <div class="notify-tx"><b id="pushTitle">🔔 새 글 알림</b><span class="small muted" id="pushMsg">새 글이나 댓글이 올라오면 폰으로 알려드려요.</span></div>
+    <button class="pl main" type="button" id="pushBtn">알림 받기</button>
+  </div>
   <form class="card compose" id="composeForm" autocomplete="off">
     <div class="chips" role="group" aria-label="글 분류" id="catPick"></div>
     <textarea id="cBody" maxlength="1000" placeholder="오늘 경기 어땠어요? 궁금한 것도 편하게 물어보세요." aria-label="내용"></textarea>
@@ -1152,6 +1160,45 @@ tr.gone td{background:#121214;color:var(--dim)}
   adminUI();pickCat(cat);pickFilter(filter);
 
   if(!SB_URL||!SB_KEY){form.hidden=true;$("adminBtn").hidden=true;status.textContent="커뮤니티는 준비 중이에요.";return}
+
+  /* 새 글 알림(웹 푸시) */
+  const VAPID="BOXz7XYiuaf4krSoyqbhbJpDvqEl10wjGo4R58K62_ytZChkZgxa4OLZjeSJkW6-xXm4UbcAg7TzgR20KYnzJlo";
+  (function(){
+    const box=$("pushBox"),btn=$("pushBtn"),pmsg=$("pushMsg");
+    const ok="serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+    const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
+    const standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+    box.hidden=false;
+    if(!ok){
+      btn.hidden=true;
+      pmsg.textContent=ios&&!standalone?"아이폰은 사파리 공유 버튼 → '홈 화면에 추가'로 설치한 앱에서 알림을 켤 수 있어요.":"이 브라우저는 알림을 지원하지 않아요. 크롬이나 홈 화면 앱에서 열어 주세요.";
+      return;
+    }
+    const key=()=>{const b=atob(VAPID.replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))};
+    const reg=()=>navigator.serviceWorker.ready;
+    async function state(){
+      const sub=await (await reg()).pushManager.getSubscription();
+      if(Notification.permission==="denied"){btn.hidden=true;pmsg.textContent="알림이 차단돼 있어요. 폰 설정에서 이 앱(사이트)의 알림을 허용해 주세요.";return}
+      btn.hidden=false;btn.disabled=false;
+      if(sub){btn.textContent="알림 끄기";btn.classList.add("off");pmsg.textContent="알림이 켜져 있어요. 새 글·댓글이 올라오면 알려드려요."}
+      else{btn.textContent="알림 받기";btn.classList.remove("off");pmsg.textContent="새 글이나 댓글이 올라오면 폰으로 알려드려요."}
+    }
+    btn.onclick=async()=>{
+      btn.disabled=true;
+      try{
+        const r=await reg();let sub=await r.pushManager.getSubscription();
+        if(sub){await rpc("push_unsubscribe",{p_endpoint:sub.endpoint}).catch(()=>{});await sub.unsubscribe()}
+        else{
+          if(await Notification.requestPermission()!=="granted"){await state();return}
+          sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key()});
+          const j=sub.toJSON();
+          await rpc("push_subscribe",{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth});
+        }
+      }catch(e){pmsg.textContent="알림을 켜지 못했어요: "+(e.message||e)}
+      await state().catch(()=>{});btn.disabled=false;
+    };
+    state().catch(()=>{});
+  })();
   function maybeLoad(){if(location.hash==="#board"&&!loaded)load(true)}
   window.addEventListener("hashchange",maybeLoad);maybeLoad();
 })();
