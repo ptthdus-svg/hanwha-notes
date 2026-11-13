@@ -98,6 +98,24 @@ p{margin:0}
 .chip:hover{color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--orange);color:#fff}
 
+/* 홈 */
+.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:760px){.home-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.hm{display:grid;gap:10px;align-content:start;text-decoration:none;color:var(--ink);padding:16px;transition:border-color .15s}
+.hm:hover{border-color:var(--orange)}
+.hm-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--orange-soft);color:var(--orange)}
+.hm-ico svg{width:21px;height:21px}
+.hm-tx{display:grid;gap:3px}
+.hm-tx b{font-size:16px}
+.hm-tx small{font-size:12.5px;color:var(--muted);line-height:1.5}
+.home-h{display:flex;justify-content:space-between;align-items:baseline}
+.home-h a{color:var(--orange-ink);text-decoration:none}
+.home-news{display:grid;gap:8px}
+.hn{display:grid;gap:4px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.hn b{font-size:15px;line-height:1.45}
+.hn small{font-size:12px;color:var(--dim)}
+.hn:hover b{color:var(--orange-ink)}
+
 /* 경기 */
 .games{display:grid;gap:8px}
 .game{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:12px 14px}
@@ -338,10 +356,9 @@ tr.gone td{background:#121214;color:var(--dim)}
   <div class="wrap">
     <a class="brand" href="#news"><span class="brand-mark"><img src="eagles-emblem.png" alt="" width="40" height="33"></span><span class="brand-name">한화 야구 노트</span></a>
     <nav class="tabs" aria-label="페이지 구역">
+    <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span>홈</span></a>
     <a href="#news" data-tab="news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2"/><path d="M8 9h4M8 13h4"/></svg><span>소식</span></a>
     <a href="#games" data-tab="games"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3M8 17h6"/></svg><span>경기</span></a>
-    <a href="#basics" data-tab="basics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 4.5c2 4 2 11 0 15M16.5 4.5c-2 4-2 11 0 15"/></svg><span>야구 입문</span></a>
-    <a href="#eagles" data-tab="eagles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span>한화 이글스</span></a>
     <a href="#players" data-tab="players"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg><span>선수·응원가</span></a>
     <a href="#board" data-tab="board"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg><span>커뮤니티</span></a>
     </nav>
@@ -377,7 +394,22 @@ tr.gone td{background:#121214;color:var(--dim)}
 <div class="wrap">
 
 <!-- ============ 스크랩 ============ -->
-<section data-view="news">
+<section data-view="home">
+  <nav class="home-grid" aria-label="바로가기">
+      <a class="card hm" href="#news"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2"/><path d="M8 9h4M8 13h4"/></svg></span><span class="hm-tx"><b>소식</b><small>경기·선수·구단 뉴스 모음. 매일 아침 8시 자동 업데이트</small></span></a>
+      <a class="card hm" href="#games"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3M8 17h6"/></svg></span><span class="hm-tx"><b>경기</b><small>한화 일정·결과와 KBO 순위</small></span></a>
+      <a class="card hm" href="#players"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg></span><span class="hm-tx"><b>선수·응원가</b><small>선수 소개, 등장곡과 응원가 바로 듣기</small></span></a>
+      <a class="card hm" href="#board"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg></span><span class="hm-tx"><b>커뮤니티</b><small>팬끼리 자유롭게 이야기하는 곳</small></span></a>
+      <a class="card hm" href="#basics"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 4.5c2 4 2 11 0 15M16.5 4.5c-2 4-2 11 0 15"/></svg></span><span class="hm-tx"><b>야구 입문</b><small>처음 보는 사람을 위한 규칙과 성적 읽는 법</small></span></a>
+      <a class="card hm" href="#eagles"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="hm-tx"><b>한화 이글스</b><small>구단 흐름, 이번 겨울 관전 포인트, 레전드</small></span></a>
+  </nav>
+  <div class="block">
+    <div class="home-h"><h3>최신 소식</h3><a class="small" href="#news">전체 보기 ›</a></div>
+    <div class="home-news" id="homeNews"></div>
+  </div>
+</section>
+
+<section data-view="news" hidden>
   <div class="block">
     <h2>한화 소식</h2>
     <p class="lede">경기 결과, 선수 소식, 구단 발표, FA·이적 뉴스를 모아 두는 곳이에요. 최신 날짜가 위로 올라와요.</p>
@@ -764,20 +796,21 @@ tr.gone td{background:#121214;color:var(--dim)}
 
 <script>
 (function(){
-  const VIEWS=["news","games","basics","eagles","players","board"];
+  const VIEWS=["home","news","games","basics","eagles","players","board"];
   const SUBS={players:"players",cheer:"players",teamsongs:"players",schedule:"games",standings:"games"};
   const DEF={players:"players",games:"schedule"};
   function show(){
     const h=(location.hash||"").replace("#","");
     const sub=SUBS[h]?h:null;
-    const v=sub?SUBS[h]:(VIEWS.includes(h)?h:"news");
+    const v=sub?SUBS[h]:(VIEWS.includes(h)?h:"home");
     const cur=sub||DEF[v]||"";
     document.querySelectorAll(".subpane").forEach(p=>{p.hidden=p.dataset.pane!==cur});
     document.querySelectorAll(".subtabs a").forEach(a=>{if(a.dataset.sub===cur)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
     document.querySelectorAll("section[data-view]").forEach(s=>{s.hidden=s.dataset.view!==v});
-    const bd=document.querySelector(".board");if(bd)bd.hidden=v!=="news";
+    const bd=document.querySelector(".board");if(bd)bd.hidden=v!=="home";
+    const tab=(v==="basics"||v==="eagles")?"home":v;
     document.querySelectorAll("nav.tabs a").forEach(a=>{
-      if(a.dataset.tab===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
+      if(a.dataset.tab===tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
     });
   }
   window.addEventListener("hashchange",()=>{show();window.scrollTo(0,0)});
@@ -974,6 +1007,9 @@ tr.gone td{background:#121214;color:var(--dim)}
     const last=clips.reduce((m,c)=>c.addedAt&&c.addedAt>m?c.addedAt:m,"");
     status.textContent=clips.length?("스크랩 "+clips.length+"건"+(last?" · 마지막 업데이트 "+fmt(last.slice(0,10)):"")):"";
     renderFilters();renderFeed();
+    const hn=document.getElementById("homeNews");
+    if(hn){hn.textContent="";clips.slice(0,3).forEach(c=>{const a=el("a","card hn");a.href=c.url;a.target="_blank";a.rel="noopener";
+      a.appendChild(el("b",null,c.title));a.appendChild(el("small",null,[c.category,c.source,rel(c.date)].filter(Boolean).join(" · ")));hn.appendChild(a)})}
   }).catch(()=>{status.textContent="스크랩을 불러오지 못했어요. 잠시 후 새로고침해 보세요.";renderFeed();});
 })();
 </script>

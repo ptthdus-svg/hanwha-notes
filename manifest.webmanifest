@@ -2,7 +2,7 @@
  "name": "한화 야구 노트",
  "short_name": "한화노트",
  "description": "야구 입문 상식, 한화 이글스 정보, 매일 아침 모이는 한화 소식",
- "start_url": "./#news",
+ "start_url": "./",
  "scope": "./",
  "display": "standalone",
  "orientation": "portrait",
