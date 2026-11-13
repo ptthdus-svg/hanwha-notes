@@ -813,6 +813,8 @@ tr.gone td{background:#121214;color:var(--dim)}
       if(a.dataset.tab===tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
     });
   }
+  // 예전 앱 시작 주소(#news)나 북마크로 들어와도 처음엔 홈부터
+  if(location.hash==="#news")history.replaceState(null,"",location.pathname+location.search);
   window.addEventListener("hashchange",()=>{show();window.scrollTo(0,0)});
   show();
 
