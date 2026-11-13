@@ -137,6 +137,10 @@ table.t td:first-child{font-weight:700;white-space:nowrap}
 .sl{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 8px}
 .sl span{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--muted)}
 .lad{display:grid;gap:12px}
+.gauge{display:grid;gap:12px;margin-bottom:14px}
+.gauge-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.gauge-head a{color:var(--orange-ink);text-decoration:none;white-space:nowrap}
+@media (min-width:900px){.gauge .lad{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}}
 .lad-row{display:grid;gap:6px}
 .lad-row>b{font-size:14px}
 .lad-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
@@ -581,6 +585,15 @@ tr.gone td{background:#121214;color:var(--dim)}
 
   <div class="subpane" data-pane="players">
     <p class="lede">2026 시즌 주요 선수예요. 사진과 등번호, 플레이 스타일, 올해 성적을 모았어요.</p>
+    <div class="card gauge">
+      <div class="gauge-head"><b>성적 감 잡는 기준</b><a class="small" href="#basics">읽는 법 자세히 ›</a></div>
+      <div class="lad">
+        <div class="lad-row"><b>AVG <small class="muted">타율</small></b><div class="lad-steps"><span>.250↓<i>아쉬움</i></span><span>.270<i>보통</i></span><span>.290<i>좋음</i></span><span>.320+<i>최상위</i></span></div></div>
+        <div class="lad-row"><b>OPS <small class="muted">종합 공격력</small></b><div class="lad-steps"><span>.700↓<i>아쉬움</i></span><span>.750<i>보통</i></span><span>.850<i>좋음</i></span><span>.950+<i>최상위</i></span></div></div>
+        <div class="lad-row"><b>ERA <small class="muted">평균자책점 · 낮을수록 좋음</small></b><div class="lad-steps"><span>5점대<i>아쉬움</i></span><span>4점대<i>보통</i></span><span>3점대<i>좋음</i></span><span>2점대<i>최상위</i></span></div></div>
+      </div>
+      <p class="small muted">HR(홈런)은 20개면 팀의 거포, 30개면 홈런왕 경쟁권. RBI(타점)는 100이면 정상급이에요. 대략적인 기준이라 해마다 조금씩 달라져요.</p>
+    </div>
     <div class="chips" role="group" aria-label="선수 분류" id="pfilters"></div>
   <div class="players" id="playerGrid"></div>
   <p class="src">선수 사진: KBO 공식 홈페이지 선수 프로필. 성적은 2026 정규시즌 종료(10/10) 기준 나무위키 정리를 옮긴 것이라 KBO 공식 기록과 조금 다를 수 있어요. 홈런 수는 충청투데이 시즌 결산과 일치해요.</p>
