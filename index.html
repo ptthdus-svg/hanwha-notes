@@ -96,6 +96,35 @@ p{margin:0}
 .chip:hover{color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--orange);color:#fff}
 
+/* 커뮤니티 */
+.compose{display:grid;gap:10px}
+.compose textarea,.compose input,.cform textarea,.cform input{font:inherit;font-size:15px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-width:0;box-sizing:border-box}
+.compose textarea{resize:vertical;min-height:96px;line-height:1.6}
+.compose textarea:focus,.compose input:focus,.cform textarea:focus,.cform input:focus{outline:none;border-color:var(--orange)}
+.compose-row,.cform-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+@media (max-width:480px){.compose-row{grid-template-columns:1fr 1fr}.compose-row button{grid-column:1/-1;justify-content:center;padding:11px}}
+.compose .chips{background:transparent;border:0;padding:0}
+.form-msg{font-size:13px;color:var(--orange-ink);min-height:0}
+.form-msg:empty{display:none}
+.posts{display:grid;gap:12px}
+.post{display:grid;gap:10px}
+.post-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.post-head .nick{font-weight:800;color:var(--ink)}
+.post-head .when{color:var(--dim);font-family:var(--f-num);font-size:12px}
+.post-head .del{margin-left:auto}
+.post-body{white-space:pre-wrap;line-height:1.65;font-size:15px}
+.post-foot{display:flex;gap:8px;align-items:center}
+.linkbtn{font:inherit;font-size:12.5px;font-weight:700;background:none;border:0;color:var(--muted);cursor:pointer;padding:4px 2px}
+.linkbtn:hover{color:var(--orange-ink)}
+.comments{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.cmt{background:var(--surface-2);border-radius:12px;padding:10px 12px;display:grid;gap:4px}
+.cmt .post-body{font-size:14px}
+.cform{display:grid;gap:8px}
+.cform textarea{min-height:60px;resize:vertical;font-size:14px}
+.cform input{font-size:14px;padding:9px 10px}
+@media (max-width:480px){.cform-row{grid-template-columns:1fr 1fr}.cform-row button{grid-column:1/-1;justify-content:center}}
+.more{justify-self:center}
+
 /* 소식 피드 */
 .howto{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px var(--orange-soft);display:inline-block}
@@ -283,6 +312,7 @@ tr.gone td{background:#121214;color:var(--dim)}
     <a href="#basics" data-tab="basics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 4.5c2 4 2 11 0 15M16.5 4.5c-2 4-2 11 0 15"/></svg><span>야구 입문</span></a>
     <a href="#eagles" data-tab="eagles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span>한화 이글스</span></a>
     <a href="#players" data-tab="players"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg><span>선수·응원가</span></a>
+    <a href="#board" data-tab="board"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg><span>커뮤니티</span></a>
     </nav>
   </div>
 </header>
@@ -653,13 +683,35 @@ tr.gone td{background:#121214;color:var(--dim)}
   </div>
 </section>
 
+<section data-view="board" hidden>
+  <div class="block">
+    <h2>커뮤니티</h2>
+    <p class="lede">한화 이야기를 자유롭게 나누는 곳이에요. 가입 없이 닉네임과 비밀번호로 글을 쓰고, 같은 비밀번호로 지울 수 있어요.</p>
+  </div>
+  <form class="card compose" id="composeForm" autocomplete="off">
+    <div class="chips" role="group" aria-label="글 분류" id="catPick"></div>
+    <textarea id="cBody" maxlength="1000" placeholder="오늘 경기 어땠어요? 궁금한 것도 편하게 물어보세요." aria-label="내용"></textarea>
+    <div class="compose-row">
+      <input id="cNick" maxlength="20" placeholder="닉네임" aria-label="닉네임">
+      <input id="cPw" type="password" maxlength="50" placeholder="비밀번호(삭제용)" aria-label="비밀번호" autocomplete="new-password">
+      <button class="pl main" type="submit">올리기</button>
+    </div>
+    <p class="small muted">누구나 볼 수 있는 공개 게시판이에요. 욕설·비방·개인정보·광고 글은 관리자가 지울 수 있어요.</p>
+    <p class="form-msg" id="cMsg" aria-live="polite"></p>
+  </form>
+  <div class="chips" role="group" aria-label="게시판 분류 필터" id="boardFilters"></div>
+  <div id="boardStatus" class="status" aria-live="polite"></div>
+  <div class="posts" id="posts"></div>
+  <button class="pl more" id="boardMore" type="button" hidden>이전 글 더 보기</button>
+</section>
+
 </div>
 </main>
 <footer class="site-foot"><div class="wrap">개인이 만든 비공식 팬 페이지예요. 한화 이글스 구단과는 관계없어요. 로고·선수 사진의 권리는 각 권리자에게 있어요.</div></footer>
 
 <script>
 (function(){
-  const VIEWS=["news","basics","eagles","players"];
+  const VIEWS=["news","basics","eagles","players","board"];
   const SUBS={players:"players",cheer:"players",teamsongs:"players"};
   function show(){
     const h=(location.hash||"").replace("#","");
@@ -869,6 +921,139 @@ tr.gone td{background:#121214;color:var(--dim)}
     status.textContent=clips.length?("스크랩 "+clips.length+"건"+(last?" · 마지막 업데이트 "+fmt(last.slice(0,10)):"")):"";
     renderFilters();renderFeed();
   }).catch(()=>{status.textContent="스크랩을 불러오지 못했어요. 잠시 후 새로고침해 보세요.";renderFeed();});
+})();
+</script>
+
+<script>
+/* 커뮤니티 게시판 (Supabase). 아래 두 값은 공개해도 되는 값이에요(읽기·쓰기는 DB 함수가 검사해요). */
+(function(){
+  const SB_URL="";
+  const SB_KEY="";
+  const CATS=["잡담","경기","직관","질문"];
+  const $=id=>document.getElementById(id);
+  const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+  const store={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  const form=$("composeForm"),status=$("boardStatus"),list=$("posts"),more=$("boardMore"),msg=$("cMsg");
+  let posts=[],comments={},filter="전체",cat="잡담",loaded=false,busy=false,hasMore=false;
+  const open=new Set();
+
+  async function rpc(fn,args){
+    const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"},body:JSON.stringify(args||{})});
+    const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch(e){}
+    if(!r.ok)throw new Error((d&&d.message)||"잠시 후 다시 시도해 주세요");
+    return d;
+  }
+  function ago(ts){
+    const d=new Date(ts),s=(Date.now()-d.getTime())/1000;
+    if(s<60)return "방금";if(s<3600)return Math.floor(s/60)+"분 전";if(s<86400)return Math.floor(s/3600)+"시간 전";
+    if(s<86400*7)return Math.floor(s/86400)+"일 전";
+    return (d.getMonth()+1)+"/"+d.getDate();
+  }
+  function chips(box,items,cur,onPick){
+    box.textContent="";
+    items.forEach(v=>{const b=el("button","chip",v);b.type="button";b.setAttribute("aria-pressed",String(v===cur));b.onclick=()=>onPick(v);box.appendChild(b)});
+  }
+  function pickCat(v){cat=v;chips($("catPick"),CATS,cat,pickCat)}
+  function pickFilter(v){filter=v;chips($("boardFilters"),["전체"].concat(CATS),filter,pickFilter);render()}
+
+  async function del(id){
+    const pw=prompt("글을 쓸 때 정한 비밀번호를 입력하세요");
+    if(!pw)return;
+    try{await rpc("board_delete",{p_id:id,p_pw:pw});await load(true)}catch(e){alert(e.message)}
+  }
+  function head(p){
+    const h=el("div","post-head");
+    if(!p.parent_id)h.appendChild(el("span","tag",p.category));
+    h.appendChild(el("span","nick",p.nickname));
+    const w=el("span","when",ago(p.created_at));w.title=new Date(p.created_at).toLocaleString("ko-KR");h.appendChild(w);
+    const d=el("button","linkbtn del","삭제");d.type="button";d.onclick=()=>del(p.id);h.appendChild(d);
+    return h;
+  }
+  function cform(pid){
+    const f=el("form","cform");f.autocomplete="off";
+    const ta=el("textarea");ta.maxLength=1000;ta.placeholder="댓글 쓰기";ta.setAttribute("aria-label","댓글 내용");
+    const row=el("div","cform-row");
+    const nk=el("input");nk.maxLength=20;nk.placeholder="닉네임";nk.value=store.get("board-nick");nk.setAttribute("aria-label","닉네임");
+    const pw=el("input");pw.type="password";pw.maxLength=50;pw.placeholder="비밀번호";pw.autocomplete="new-password";pw.setAttribute("aria-label","비밀번호");
+    const b=el("button","pl main","댓글 달기");b.type="submit";
+    row.append(nk,pw,b);const m=el("p","form-msg");m.setAttribute("aria-live","polite");
+    f.append(ta,row,m);
+    f.onsubmit=async e=>{e.preventDefault();if(busy)return;
+      const err=check(nk.value,ta.value,pw.value);if(err){m.textContent=err;return}
+      busy=true;b.disabled=true;m.textContent="";
+      try{await rpc("board_create",{p_parent:pid,p_category:null,p_nickname:nk.value.trim(),p_body:ta.value.trim(),p_pw:pw.value});store.set("board-nick",nk.value.trim());open.add(pid);await load(true)}
+      catch(x){m.textContent=x.message}finally{busy=false;b.disabled=false}};
+    return f;
+  }
+  function render(){
+    list.textContent="";
+    const shown=posts.filter(p=>filter==="전체"||p.category===filter);
+    if(!shown.length){
+      const e=el("div","card empty");e.appendChild(el("b",null,posts.length?"이 분류에는 아직 글이 없어요":"아직 글이 없어요"));
+      e.appendChild(el("span","small muted","첫 글을 남겨 보세요."));list.appendChild(e);
+    }
+    shown.forEach(p=>{
+      const c=el("article","card post");
+      c.appendChild(head(p));c.appendChild(el("div","post-body",p.body));
+      const cs=comments[p.id]||[];
+      const foot=el("div","post-foot");
+      const t=el("button","linkbtn",cs.length?"댓글 "+cs.length:"댓글 쓰기");t.type="button";
+      t.setAttribute("aria-expanded",String(open.has(p.id)));
+      t.onclick=()=>{open.has(p.id)?open.delete(p.id):open.add(p.id);render()};
+      foot.appendChild(t);c.appendChild(foot);
+      if(open.has(p.id)){
+        const box=el("div","comments");
+        cs.forEach(x=>{const k=el("div","cmt");k.appendChild(head(x));k.appendChild(el("div","post-body",x.body));box.appendChild(k)});
+        box.appendChild(cform(p.id));c.appendChild(box);
+      }
+      list.appendChild(c);
+    });
+    more.hidden=!hasMore||filter!=="전체";
+  }
+  function ingest(rows,reset){
+    if(reset){posts=[];comments={}}
+    const ids=new Set(posts.map(p=>p.id));
+    rows.filter(r=>!r.parent_id).forEach(r=>{if(!ids.has(r.id))posts.push(r)});
+    rows.filter(r=>r.parent_id).forEach(r=>{(comments[r.parent_id]=comments[r.parent_id]||[]);if(!comments[r.parent_id].some(x=>x.id===r.id))comments[r.parent_id].push(r)});
+    posts.sort((a,b)=>b.created_at.localeCompare(a.created_at));
+    Object.values(comments).forEach(a=>a.sort((x,y)=>x.created_at.localeCompare(y.created_at)));
+  }
+  const PAGE=30;
+  async function load(reset){
+    status.textContent=loaded?"":"글을 불러오는 중…";
+    try{
+      const n=reset?Math.max(PAGE,posts.length):PAGE;
+      const before=reset?null:(posts.length?posts[posts.length-1].created_at:null);
+      const rows=await rpc("board_list",{p_limit:n,p_before:before})||[];
+      const tops=rows.filter(r=>!r.parent_id).length;
+      ingest(rows,reset);hasMore=tops>=n;loaded=true;status.textContent="";render();
+    }catch(e){status.textContent="글을 불러오지 못했어요. 잠시 후 새로고침해 보세요."}
+  }
+  function check(nick,body,pw){
+    if(!nick.trim())return "닉네임을 써주세요";
+    if(!body.trim())return "내용을 써주세요";
+    if(pw.length<4)return "비밀번호는 4자 이상으로 정해주세요(삭제할 때 필요해요)";
+    return "";
+  }
+  form.onsubmit=async e=>{
+    e.preventDefault();if(busy)return;
+    const nick=$("cNick").value,body=$("cBody").value,pw=$("cPw").value;
+    const err=check(nick,body,pw);if(err){msg.textContent=err;return}
+    busy=true;msg.textContent="";const b=form.querySelector("button[type=submit]");b.disabled=true;
+    try{
+      await rpc("board_create",{p_parent:null,p_category:cat,p_nickname:nick.trim(),p_body:body.trim(),p_pw:pw});
+      store.set("board-nick",nick.trim());$("cBody").value="";$("cPw").value="";
+      if(filter!=="전체"&&filter!==cat)pickFilter("전체");
+      await load(true);
+    }catch(x){msg.textContent=x.message}finally{busy=false;b.disabled=false}
+  };
+  more.onclick=()=>load(false);
+  $("cNick").value=store.get("board-nick");
+  pickCat(cat);pickFilter(filter);
+
+  if(!SB_URL||!SB_KEY){form.hidden=true;status.textContent="커뮤니티는 준비 중이에요.";return}
+  function maybeLoad(){if(location.hash==="#board"&&!loaded)load(true)}
+  window.addEventListener("hashchange",maybeLoad);maybeLoad();
 })();
 </script>
 
