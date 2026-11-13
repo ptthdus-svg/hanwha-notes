@@ -180,6 +180,10 @@ ul.plain li::marker{color:var(--orange)}
 .pc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:6px}
 .pc-stats span{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 4px;text-align:center;display:grid;gap:1px;font-family:var(--f-num);font-weight:600;font-size:14px}
 .pc-stats span b{order:-1;color:var(--muted);font-weight:500;font-size:10.5px;letter-spacing:.04em}
+.pc-stats span.g-good{background:var(--orange-soft);border-color:transparent;color:var(--orange-ink)}
+.pc-stats span.g-top{background:var(--orange);border-color:transparent;color:#fff}
+.pc-stats span.g-good b{color:var(--orange-ink);opacity:.8}
+.pc-stats span.g-top b{color:#fff;opacity:.85}
 .pc-music{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px;border-top:1px solid var(--line);padding-top:10px;margin:0}
 .pc-music dt{color:var(--muted);font-size:12px;padding-top:1px}
 .pc-music dd{margin:0;min-width:0}
@@ -592,7 +596,7 @@ tr.gone td{background:#121214;color:var(--dim)}
         <div class="lad-row"><b>OPS <small class="muted">종합 공격력</small></b><div class="lad-steps"><span>.700↓<i>아쉬움</i></span><span>.750<i>보통</i></span><span>.850<i>좋음</i></span><span>.950+<i>최상위</i></span></div></div>
         <div class="lad-row"><b>ERA <small class="muted">평균자책점 · 낮을수록 좋음</small></b><div class="lad-steps"><span>5점대<i>아쉬움</i></span><span>4점대<i>보통</i></span><span>3점대<i>좋음</i></span><span>2점대<i>최상위</i></span></div></div>
       </div>
-      <p class="small muted">HR(홈런)은 20개면 팀의 거포, 30개면 홈런왕 경쟁권. RBI(타점)는 100이면 정상급이에요. 대략적인 기준이라 해마다 조금씩 달라져요.</p>
+      <p class="small muted">HR(홈런)은 20개면 좋음, 30개면 홈런왕 경쟁권이에요. RBI(타점)는 80이면 좋음, 100이면 정상급이에요. 아래 선수 카드에도 같은 색으로 표시돼요. 대략적인 기준이라 해마다 조금씩 달라지고, 출전이 적은 선수는 숫자가 높게 나올 수 있어요.</p>
     </div>
     <div class="chips" role="group" aria-label="선수 분류" id="pfilters"></div>
   <div class="players" id="playerGrid"></div>
@@ -743,6 +747,11 @@ tr.gone td{background:#121214;color:var(--dim)}
   }
   /* KBO 공식 프로필 사진 (koreabaseball.com 선수 ID) */
   const PID={"노시환":69737,"강백호":68050,"페라자":54730,"문현빈":53764,"허인서":52764,"채은성":79192,"심우준":64006,"최재훈":78288,"김태연":66704,"최인호":50707,"이도윤":65703,"정은원":68743,"류현진":76715,"왕옌청":56719,"오웬 화이트":56724,"화이트":56724,"문동주":52701,"김서현":53754,"조동욱":54768,"박상원":67703,"정우주":55743,"임종찬":50704,"이진영":66657,"이재원":76812,"이원석":68700,"박상언":66707,"박정현":50709,"황영묵":54795,"권광민":52769,"장규현":51762,"유로결":69766,"오재원":56754,"하주석":62700,"손아섭":77532};
+  // 선수 소개 상단 "성적 감 잡는 기준" 카드와 같은 기준
+  function grade(k,v){const n=parseFloat(String(v).replace(/^\./,"0."));if(isNaN(n))return null;
+    const T={AVG:[.290,.320],OPS:[.850,.950],HR:[20,30],RBI:[80,100]};
+    if(k==="ERA")return n<3?"g-top":n<4?"g-good":null;
+    const t=T[k];if(!t)return null;return n>=t[1]?"g-top":n>=t[0]?"g-good":null}
   function photoUrl(name){const id=PID[name]||PID[String(name).replace("요나단 ","")];return id?"https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/person/middle/2026/"+id+".jpg":null}
   function avatar(name,no,cls){
     const w=el("div",cls||"pc-ava");const u=photoUrl(name);
@@ -763,7 +772,7 @@ tr.gone td{background:#121214;color:var(--dim)}
       const h=el("div","pc-head");h.appendChild(avatar(p.name,p.no));
       const n=el("div");const nm=el("div","pc-name",p.name);if(p.badge)nm.appendChild(el("span","pc-badge",p.badge));n.appendChild(nm);n.appendChild(el("div","pc-pos",p.pos));h.appendChild(n);c.appendChild(h);
       c.appendChild(el("p","pc-trait",p.trait));
-      if(p.st&&p.st.length){const s=el("div","pc-stats");p.st.forEach(([k,v])=>{const sp=el("span");sp.appendChild(el("b",null,k));sp.appendChild(document.createTextNode(v));s.appendChild(sp)});c.appendChild(s)}
+      if(p.st&&p.st.length){const s=el("div","pc-stats");p.st.forEach(([k,v])=>{const sp=el("span");const gr=grade(k,v);if(gr){sp.className=gr;sp.title=gr==="g-top"?"최상위":"좋음"}sp.appendChild(el("b",null,k));sp.appendChild(document.createTextNode(v));s.appendChild(sp)});c.appendChild(s)}
       if(p.cheer||p.walk){const m=el("dl","pc-music");if(p.walk){m.appendChild(el("dt",null,"등장곡"));m.appendChild(el("dd",null,p.walk))}if(p.cheer){m.appendChild(el("dt",null,"응원가"));m.appendChild(el("dd",null,p.cheer))}c.appendChild(m);c.appendChild(playLinks(p.name))}
       else if(p.g==="투수"){c.appendChild(el("p","small muted","투수는 타석에 서지 않아서 개인 응원가·등장곡이 없어요."))}
       pw.appendChild(c);
