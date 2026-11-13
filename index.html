@@ -154,6 +154,9 @@ table.st tr.me td:first-child{color:var(--orange-ink)}
 .form-msg{font-size:13px;color:var(--orange-ink);min-height:0}
 .form-msg:empty{display:none}
 .posts{display:grid;gap:12px}
+.board-tools{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#boardStatus:empty{display:none}
+.board-tools .pl[disabled]{opacity:.6}
 .notify{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:14px 16px}
 .notify-tx{display:grid;gap:2px;min-width:0}
 .notify .pl{flex:none}
@@ -792,6 +795,7 @@ tr.gone td{background:#121214;color:var(--dim)}
     <p class="form-msg" id="cMsg" aria-live="polite"></p>
   </form>
   <div class="chips" role="group" aria-label="게시판 분류 필터" id="boardFilters"></div>
+  <div class="board-tools"><span class="small muted" id="boardUpdated"></span><button class="pl" type="button" id="boardRefresh">↻ 새로고침</button></div>
   <div id="boardStatus" class="status" aria-live="polite"></div>
   <div class="posts" id="posts"></div>
   <button class="pl more" id="boardMore" type="button" hidden>이전 글 더 보기</button>
@@ -1136,6 +1140,7 @@ tr.gone td{background:#121214;color:var(--dim)}
       const rows=await rpc("board_list",{p_limit:n,p_before:before})||[];
       const tops=rows.filter(r=>!r.parent_id).length;
       ingest(rows,reset);hasMore=tops>=n;loaded=true;status.textContent="";render();
+      const t=new Date();$("boardUpdated").textContent=t.getHours()+":"+String(t.getMinutes()).padStart(2,"0")+" 기준";
     }catch(e){status.textContent="글을 불러오지 못했어요. 잠시 후 새로고침해 보세요."}
   }
   function check(nick,body){
@@ -1199,8 +1204,20 @@ tr.gone td{background:#121214;color:var(--dim)}
     };
     state().catch(()=>{});
   })();
-  function maybeLoad(){if(location.hash==="#board"&&!loaded)load(true)}
-  window.addEventListener("hashchange",maybeLoad);maybeLoad();
+  // 새로고침: 버튼, 커뮤니티 탭에 다시 들어올 때, 앱으로 돌아올 때, 보고 있는 동안 30초마다
+  const typing=()=>[...document.querySelectorAll(".cform textarea")].some(t=>t.value.trim()||t===document.activeElement);
+  let refreshing=false;
+  async function refresh(auto){
+    if(location.hash!=="#board"||refreshing)return;
+    if(auto&&typing())return; // 댓글 쓰는 중엔 자동 새로고침 안 함
+    refreshing=true;const rb=$("boardRefresh");rb.disabled=true;
+    try{await load(true)}finally{refreshing=false;rb.disabled=false}
+  }
+  $("boardRefresh").onclick=()=>refresh(false);
+  window.addEventListener("hashchange",()=>refresh(true));
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh(true)});
+  setInterval(()=>{if(document.visibilityState==="visible")refresh(true)},30000);
+  refresh(true);
 })();
 </script>
 
