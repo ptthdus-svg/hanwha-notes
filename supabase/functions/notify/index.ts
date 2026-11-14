@@ -15,18 +15,32 @@ Deno.serve(async (req) => {
   if (req.headers.get("x-hook-secret") !== Deno.env.get("HOOK_SECRET")) {
     return new Response("forbidden", { status: 403 });
   }
-  const { post, subs } = (await req.json()) as {
-    post: { id: number; parent_id: number | null; category: string; nickname: string; body: string; parent_title?: string };
+  const { post, news, subs } = (await req.json()) as {
+    post?: { id: number; parent_id: number | null; category: string; nickname: string; body: string };
+    news?: { count: number; first: string };
     subs: Sub[];
   };
   const short = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
-  const isComment = post.parent_id != null;
-  const payload = JSON.stringify({
-    title: isComment ? `새 댓글 · ${post.nickname}` : `새 글 [${post.category}] · ${post.nickname}`,
-    body: short(post.body.replace(/\s+/g, " "), 120),
-    url: "./#board",
-    tag: "board-" + (post.parent_id ?? post.id),
-  });
+  let payload: string;
+  if (news) {
+    // 한화 소식: 한 번 수집에 알림 1개
+    payload = JSON.stringify({
+      title: `한화 소식 ${news.count}건`,
+      body: short(news.first.replace(/\s+/g, " "), 100) + (news.count > 1 ? ` 외 ${news.count - 1}건` : ""),
+      url: "./#news",
+      tag: "news",
+    });
+  } else if (post) {
+    const isComment = post.parent_id != null;
+    payload = JSON.stringify({
+      title: isComment ? `새 댓글 · ${post.nickname}` : `새 글 [${post.category}] · ${post.nickname}`,
+      body: short(post.body.replace(/\s+/g, " "), 120),
+      url: "./#board",
+      tag: "board-" + (post.parent_id ?? post.id),
+    });
+  } else {
+    return new Response("bad request", { status: 400 });
+  }
 
   let sent = 0;
   const gone: string[] = [];

@@ -27,6 +27,7 @@ jobs:
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          NOTIFY_FILE: ${{ runner.temp }}/news_notify.json
         run: python scripts/collect_news.py
       - name: 새 기사가 있으면 커밋
         run: |
@@ -39,3 +40,20 @@ jobs:
           git commit -m "스크랩: $(TZ=Asia/Seoul date +%Y-%m-%d) 한화 소식 ${n}건"
           for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
           exit 1
+      - name: 소식 알림 보내기
+        if: steps.collect.outputs.added != ''
+        env:
+          NEWS_HOOK_SECRET: ${{ secrets.NEWS_HOOK_SECRET }}
+          NOTIFY_FILE: ${{ runner.temp }}/news_notify.json
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          n = json.load(open(os.environ["NOTIFY_FILE"], encoding="utf-8"))
+          body = json.dumps({"p_secret": os.environ["NEWS_HOOK_SECRET"], "p_count": n["count"], "p_first": n["first"]}).encode()
+          req = urllib.request.Request("https://hluwwdskhyjoxntoqvux.supabase.co/rest/v1/rpc/news_notify", data=body,
+              headers={"apikey": "sb_publishable_ZkX-cJ2WpXarHCZzBhvCmw_bYdlRK3L", "Content-Type": "application/json"})
+          try:
+              print("알림 대상 기기:", urllib.request.urlopen(req, timeout=20).read().decode())
+          except Exception as e:
+              print("알림 실패(수집은 정상):", e)
+          PY

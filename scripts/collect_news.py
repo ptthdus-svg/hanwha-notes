@@ -180,6 +180,9 @@ def main():
     print(f"추가 {len(added)}건")
     for a in added:
         print(" -", a["date"], a["category"], a["title"], "|", a["source"])
+    nf = os.environ.get("NOTIFY_FILE")
+    if nf:  # 알림용: 건수와 가장 최근 기사 제목
+        Path(nf).write_text(json.dumps({"count": len(added), "first": added[0]["title"]}, ensure_ascii=False), encoding="utf-8")
     gh = os.environ.get("GITHUB_OUTPUT")
     if gh:
         with open(gh, "a", encoding="utf-8") as f:

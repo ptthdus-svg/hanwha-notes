@@ -157,10 +157,13 @@ table.st tr.me td:first-child{color:var(--orange-ink)}
 .board-tools{display:flex;justify-content:space-between;align-items:center;gap:8px}
 #boardStatus:empty{display:none}
 .board-tools .pl[disabled]{opacity:.6}
-.notify{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:14px 16px}
+.notify{display:grid;gap:10px;padding:14px 16px}
 .notify-tx{display:grid;gap:2px;min-width:0}
-.notify .pl{flex:none}
-.notify .pl.off{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+.notify-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:10px}
+.notify-row span{font-size:14px;font-weight:700}
+.notify-row small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.notify .pl{flex:none;min-width:64px;justify-content:center}
+.notify .pl.on{background:var(--orange);border-color:var(--orange);color:#fff}
 .post{display:grid;gap:10px}
 .post-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
 .post-head .nick{font-weight:800;color:var(--ink)}
@@ -422,6 +425,7 @@ tr.gone td{background:#121214;color:var(--dim)}
     <p class="lede">경기 결과, 선수 소식, 구단 발표, FA·이적 뉴스를 모아 두는 곳이에요. 최신 날짜가 위로 올라와요.</p>
     <div class="howto small muted"><span class="live-dot"></span>매일 아침·저녁 7시 반에 네이버 뉴스에서 한화 기사가 자동으로 모여요.</div>
   </div>
+  <div class="push-slot" hidden></div>
   <div class="chips" role="group" aria-label="분류 필터" id="filters"></div>
   <div id="feedStatus" class="status" aria-live="polite">스크랩을 불러오는 중…</div>
   <div class="feed" id="feed"></div>
@@ -780,10 +784,7 @@ tr.gone td{background:#121214;color:var(--dim)}
     <h2>커뮤니티</h2>
     <p class="lede">한화 이야기를 자유롭게 나누는 곳이에요. 가입 없이 닉네임만으로 글과 댓글을 쓸 수 있어요. 올린 글은 직접 지울 수 없으니 한 번 더 읽어보고 올려 주세요.</p>
   </div>
-  <div class="card notify" id="pushBox" hidden>
-    <div class="notify-tx"><b id="pushTitle">🔔 새 글 알림</b><span class="small muted" id="pushMsg">새 글이나 댓글이 올라오면 폰으로 알려드려요.</span></div>
-    <button class="pl main" type="button" id="pushBtn">알림 받기</button>
-  </div>
+  <div class="push-slot" hidden></div>
   <form class="card compose" id="composeForm" autocomplete="off">
     <div class="chips" role="group" aria-label="글 분류" id="catPick"></div>
     <textarea id="cBody" maxlength="1000" placeholder="오늘 경기 어땠어요? 궁금한 것도 편하게 물어보세요." aria-label="내용"></textarea>
@@ -1171,43 +1172,63 @@ tr.gone td{background:#121214;color:var(--dim)}
 
   if(!SB_URL||!SB_KEY){form.hidden=true;$("adminBtn").hidden=true;status.textContent="커뮤니티는 준비 중이에요.";return}
 
-  /* 새 글 알림(웹 푸시) */
+  /* 알림(웹 푸시): 커뮤니티 새 글 / 한화 소식 — 소식 탭과 커뮤니티 탭에 같은 카드 */
   const VAPID="BOXz7XYiuaf4krSoyqbhbJpDvqEl10wjGo4R58K62_ytZChkZgxa4OLZjeSJkW6-xXm4UbcAg7TzgR20KYnzJlo";
   (function(){
-    const box=$("pushBox"),btn=$("pushBtn"),pmsg=$("pushMsg");
+    const slots=[...document.querySelectorAll(".push-slot")];
     const ok="serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
     const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
     const standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone;
-    box.hidden=false;
-    if(!ok){
-      btn.hidden=true;
-      pmsg.textContent=ios&&!standalone?"아이폰은 사파리 공유 버튼 → '홈 화면에 추가'로 설치한 앱에서 알림을 켤 수 있어요.":"이 브라우저는 알림을 지원하지 않아요. 크롬이나 홈 화면 앱에서 열어 주세요.";
-      return;
-    }
+    const TOPICS=[["news","한화 소식","아침·저녁 새 기사가 모이면 한 번에"],["board","커뮤니티 새 글·댓글","글이나 댓글이 올라올 때마다"]];
+    let topics=[],busy2=false,note="";
     const key=()=>{const b=atob(VAPID.replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))};
     const reg=()=>navigator.serviceWorker.ready;
-    async function state(){
-      const sub=await (await reg()).pushManager.getSubscription();
-      if(Notification.permission==="denied"){btn.hidden=true;pmsg.textContent="알림이 차단돼 있어요. 폰 설정에서 이 앱(사이트)의 알림을 허용해 주세요.";return}
-      btn.hidden=false;btn.disabled=false;
-      if(sub){btn.textContent="알림 끄기";btn.classList.add("off");pmsg.textContent="알림이 켜져 있어요. 새 글·댓글이 올라오면 알려드려요."}
-      else{btn.textContent="알림 받기";btn.classList.remove("off");pmsg.textContent="새 글이나 댓글이 올라오면 폰으로 알려드려요."}
-    }
-    btn.onclick=async()=>{
-      btn.disabled=true;
-      try{
-        const r=await reg();let sub=await r.pushManager.getSubscription();
-        if(sub){await rpc("push_unsubscribe",{p_endpoint:sub.endpoint}).catch(()=>{});await sub.unsubscribe()}
-        else{
-          if(await Notification.requestPermission()!=="granted"){await state();return}
-          sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key()});
-          const j=sub.toJSON();
-          await rpc("push_subscribe",{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth});
+    function draw(){
+      slots.forEach(slot=>{
+        slot.hidden=false;slot.textContent="";
+        const c=el("div","card notify");
+        const tx=el("div","notify-tx");tx.appendChild(el("b",null,"🔔 알림"));
+        let msg=note;
+        if(!ok)msg=ios&&!standalone?"아이폰은 사파리 공유 버튼 → '홈 화면에 추가'로 설치한 앱에서 알림을 켤 수 있어요.":"이 브라우저는 알림을 지원하지 않아요. 크롬이나 홈 화면 앱에서 열어 주세요.";
+        else if(Notification.permission==="denied")msg="알림이 차단돼 있어요. 폰 설정에서 이 앱(사이트)의 알림을 허용해 주세요.";
+        else if(!msg)msg=topics.length?"켜 둔 알림만 폰으로 보내드려요.":"받고 싶은 알림을 켜 주세요.";
+        tx.appendChild(el("span","small muted",msg));c.appendChild(tx);
+        if(ok&&Notification.permission!=="denied"){
+          TOPICS.forEach(([k,label,sub])=>{
+            const row=el("div","notify-row");const l=el("span",null,label);l.appendChild(el("small",null,sub));row.appendChild(l);
+            const on=topics.includes(k);const b=el("button","pl"+(on?" on":""),on?"켜짐":"꺼짐");b.type="button";
+            b.setAttribute("aria-pressed",String(on));b.setAttribute("aria-label",label+" 알림 "+(on?"끄기":"켜기"));b.disabled=busy2;
+            b.onclick=()=>toggle(k);row.appendChild(b);c.appendChild(row);
+          });
         }
-      }catch(e){pmsg.textContent="알림을 켜지 못했어요: "+(e.message||e)}
-      await state().catch(()=>{});btn.disabled=false;
-    };
-    state().catch(()=>{});
+        slot.appendChild(c);
+      });
+    }
+    async function load(){
+      if(!ok){draw();return}
+      const sub=await (await reg()).pushManager.getSubscription();
+      topics=sub?(await rpc("push_topics",{p_endpoint:sub.endpoint}).catch(()=>[])||[]):[];
+      draw();
+    }
+    async function toggle(k){
+      busy2=true;note="";draw();
+      try{
+        const want=topics.includes(k)?topics.filter(x=>x!==k):topics.concat(k);
+        const r=await reg();let sub=await r.pushManager.getSubscription();
+        if(!want.length){
+          if(sub){await rpc("push_unsubscribe",{p_endpoint:sub.endpoint}).catch(()=>{});await sub.unsubscribe()}
+        }else{
+          if(!sub){
+            if(await Notification.requestPermission()!=="granted"){busy2=false;await load();return}
+            sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key()});
+          }
+          const j=sub.toJSON();
+          await rpc("push_subscribe",{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_topics:want});
+        }
+      }catch(e){note="알림 설정을 바꾸지 못했어요: "+(e.message||e)}
+      busy2=false;await load().catch(()=>draw());
+    }
+    load().catch(()=>draw());
   })();
   // 새로고침: 버튼, 커뮤니티 탭에 다시 들어올 때, 앱으로 돌아올 때, 보고 있는 동안 30초마다
   const typing=()=>[...document.querySelectorAll(".cform textarea")].some(t=>t.value.trim()||t===document.activeElement);
