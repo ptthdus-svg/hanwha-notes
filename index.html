@@ -178,7 +178,7 @@ table.st tr.me td:first-child{color:var(--orange-ink)}
 .cform input{font-size:14px;padding:9px 10px}
 .admin-bar{display:flex;justify-content:center;gap:12px;padding-top:4px}
 .post-head .del{color:#ff7b7b}
-.more{justify-self:center}
+.more{justify-self:center;justify-content:center}
 
 /* 소식 피드 */
 .howto{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -403,7 +403,7 @@ tr.gone td{background:#121214;color:var(--dim)}
 <!-- ============ 스크랩 ============ -->
 <section data-view="home">
   <nav class="home-grid" aria-label="바로가기">
-      <a class="card hm" href="#news"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2"/><path d="M8 9h4M8 13h4"/></svg></span><span class="hm-tx"><b>소식</b><small>경기·선수·구단 뉴스 모음. 매일 아침 8시 자동 업데이트</small></span></a>
+      <a class="card hm" href="#news"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2"/><path d="M8 9h4M8 13h4"/></svg></span><span class="hm-tx"><b>소식</b><small>경기·선수·구단 뉴스 모음. 아침·저녁 자동 업데이트</small></span></a>
       <a class="card hm" href="#games"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3M8 17h6"/></svg></span><span class="hm-tx"><b>경기</b><small>한화 일정·결과와 KBO 순위</small></span></a>
       <a class="card hm" href="#players"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg></span><span class="hm-tx"><b>선수·응원가</b><small>선수 소개, 등장곡과 응원가 바로 듣기</small></span></a>
       <a class="card hm" href="#board"><span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg></span><span class="hm-tx"><b>커뮤니티</b><small>팬끼리 자유롭게 이야기하는 곳</small></span></a>
@@ -420,7 +420,7 @@ tr.gone td{background:#121214;color:var(--dim)}
   <div class="block">
     <h2>한화 소식</h2>
     <p class="lede">경기 결과, 선수 소식, 구단 발표, FA·이적 뉴스를 모아 두는 곳이에요. 최신 날짜가 위로 올라와요.</p>
-    <div class="howto small muted"><span class="live-dot"></span>매일 아침 8시에 새 소식이 자동으로 모여요.</div>
+    <div class="howto small muted"><span class="live-dot"></span>매일 아침·저녁 7시 반에 네이버 뉴스에서 한화 기사가 자동으로 모여요.</div>
   </div>
   <div class="chips" role="group" aria-label="분류 필터" id="filters"></div>
   <div id="feedStatus" class="status" aria-live="polite">스크랩을 불러오는 중…</div>
@@ -982,7 +982,7 @@ tr.gone td{background:#121214;color:var(--dim)}
       const n=c==="전체"?clips.length:clips.filter(x=>x.category===c).length;
       b.textContent=c+(clips.length?" "+n:"");
       b.setAttribute("aria-pressed",String(c===active));
-      b.addEventListener("click",()=>{active=c;try{localStorage.setItem("hanwha-filter",c)}catch(e){};renderFilters();renderFeed()});
+      b.addEventListener("click",()=>{active=c;shown=40;try{localStorage.setItem("hanwha-filter",c)}catch(e){};renderFilters();renderFeed()});
       filters.appendChild(b);
     });
   }
@@ -992,14 +992,14 @@ tr.gone td{background:#121214;color:var(--dim)}
     const list=clips.filter(c=>active==="전체"||c.category===active);
     if(!clips.length){
       const e=document.createElement("div");e.className="card empty";
-      e.innerHTML='<b>아직 스크랩이 없어요</b><span class="small muted">매일 아침 8시에 최신 기사가 자동으로 쌓여요.</span>';
+      e.innerHTML='<b>아직 스크랩이 없어요</b><span class="small muted">매일 아침·저녁으로 최신 기사가 자동으로 쌓여요.</span>';
       feed.appendChild(e);return;
     }
     if(!list.length){
       const e=document.createElement("p");e.className="status";e.style.padding="16px 0";
       e.textContent="'"+active+"' 분류의 스크랩은 아직 없어요.";feed.appendChild(e);return;
     }
-    list.forEach(c=>{
+    list.slice(0,shown).forEach(c=>{
       const row=el("article","clip");
       const top=el("div","clip-top");
       const ic=el("span","clip-icon");ic.innerHTML=CAT_ICON[c.category]||CAT_ICON["구단"];top.appendChild(ic);
@@ -1013,11 +1013,16 @@ tr.gone td{background:#121214;color:var(--dim)}
       m.appendChild(el("span","when",rel(c.date)));
       row.appendChild(m);feed.appendChild(row);
     });
+    if(list.length>shown){
+      const b=el("button","pl more","이전 소식 더 보기 ("+(list.length-shown)+"건 남음)");b.type="button";
+      b.onclick=()=>{shown+=40;renderFeed()};feed.appendChild(b);
+    }
   }
+  let shown=40;
   renderFilters();
 
   fetch("clips.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(String(r.status));return r.json()}).then(list=>{
-    clips=(Array.isArray(list)?list:[]).slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+    clips=(Array.isArray(list)?list:[]).slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||String(b.pubAt||b.addedAt||"").localeCompare(String(a.pubAt||a.addedAt||"")));
     const last=clips.reduce((m,c)=>c.addedAt&&c.addedAt>m?c.addedAt:m,"");
     status.textContent=clips.length?("스크랩 "+clips.length+"건"+(last?" · 마지막 업데이트 "+fmt(last.slice(0,10)):"")):"";
     renderFilters();renderFeed();

@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: kbo-update
+  group: repo-write
   cancel-in-progress: false
 
 jobs:

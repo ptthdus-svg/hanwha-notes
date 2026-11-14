@@ -1,0 +1,40 @@
+name: 한화 소식 수집
+
+on:
+  schedule:
+    # 아침 7:30, 저녁 7:30 (KST). cron 은 UTC 기준이에요.
+    - cron: "30 22 * * *"
+    - cron: "30 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repo-write
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 네이버 뉴스에서 한화 기사 모으기
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: python scripts/collect_news.py
+      - name: 새 기사가 있으면 커밋
+        run: |
+          if git diff --quiet -- clips.json; then echo "새 기사 없음"; exit 0; fi
+          python -c "import json;json.load(open('clips.json',encoding='utf-8'))"
+          n=$(git diff -U0 -- clips.json | grep -c '^+ *"id"' || true)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clips.json
+          git commit -m "스크랩: $(TZ=Asia/Seoul date +%Y-%m-%d) 한화 소식 ${n}건"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
+          exit 1
