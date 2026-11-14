@@ -23,6 +23,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: 네이버 뉴스에서 한화 기사 모으기
+        id: collect
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
@@ -31,7 +32,7 @@ jobs:
         run: |
           if git diff --quiet -- clips.json; then echo "새 기사 없음"; exit 0; fi
           python -c "import json;json.load(open('clips.json',encoding='utf-8'))"
-          n=$(git diff -U0 -- clips.json | grep -c '^+ *"id"' || true)
+          n="${{ steps.collect.outputs.added }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add clips.json
